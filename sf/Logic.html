@@ -1,0 +1,2011 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>Logic: Logic in Coq</title>
+</head>
+
+<script>
+<!--
+  function toggleDisplay(id)
+  {
+     var elt = document.getElementById(id);
+     if (elt.style.display == 'none') {
+       elt.style.display = 'block';
+     } else {
+       elt.style.display = 'none';
+     }
+  }
+  function hideAll(cls)
+  {
+    var testClass = new RegExp("(^|s)" + cls + "(s|$)");
+    var tag = tag || "*";
+    var elements = document.getElementsByTagName("div");
+    var current;
+    var length = elements.length;
+    for(var i=0; i<length; i++){
+      current = elements[i];
+      if(testClass.test(current.className)) {
+        current.style.display = 'none';
+      }
+    }
+  }
+// --> 
+</script>
+
+<body onLoad="hideAll('proofscript')">
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Logic<span class="subtitle">Logic in Coq</span></h1>
+
+<div class="code code-tight">
+</div>
+
+<div class="doc">
+
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;$Date:&nbsp;2012-07-22&nbsp;18:36:58&nbsp;-0400&nbsp;(Sun,&nbsp;22&nbsp;Jul&nbsp;2012)&nbsp;$&nbsp;*)</span><br/>
+
+<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Export</span> "Prop".<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Coq's built-in logic is extremely small: only <span class="inlinecode"><span class="id" type="keyword">Inductive</span></span>
+    definitions, universal quantification (<span class="inlinecode"><span style="font-family: arial;">&forall;</span></span>), and
+    implication (<span class="inlinecode"><span style="font-family: arial;">&rarr;</span></span>) are primitive, while all the other familiar
+    logical connectives &mdash; conjunction, disjunction, negation,
+    existential quantification, even equality &mdash; can be defined using
+    just these. 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab205"></a><h1 class="section">Quantification and Implication</h1>
+
+<div class="paragraph"> </div>
+
+ In fact, <span class="inlinecode"><span style="font-family: arial;">&rarr;</span></span> and <span class="inlinecode"><span style="font-family: arial;">&forall;</span></span> are the <i>same</i> primitive!  Coq's <span class="inlinecode"><span style="font-family: arial;">&rarr;</span></span>
+    notation is actually just a shorthand for <span class="inlinecode"><span style="font-family: arial;">&forall;</span></span>.  The <span class="inlinecode"><span style="font-family: arial;">&forall;</span></span>
+    notation is more general, because it allows us to <i>name</i> the
+    hypothesis. 
+<div class="paragraph"> </div>
+
+ For example, consider this proposition: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">funny_prop1</span> := <br/>
+&nbsp;&nbsp;<span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span>, <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">E</span> : <span class="id" type="var">beautiful</span> <span class="id" type="var">n</span>), <span class="id" type="var">beautiful</span> (<span class="id" type="var">n</span>+3).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+If we had a proof term inhabiting this proposition, it would
+    be a function with two arguments: a number <span class="inlinecode"><span class="id" type="var">n</span></span> and some evidence
+    that <span class="inlinecode"><span class="id" type="var">n</span></span> is beautiful.  But the name <span class="inlinecode"><span class="id" type="var">E</span></span> for this evidence is not
+    used in the rest of the statement of <span class="inlinecode"><span class="id" type="var">funny_prop1</span></span>, so it's a bit
+    silly to bother making up a name.  We could write it like this
+    instead, using the dummy identifier <span class="inlinecode"><span class="id" type="var">_</span></span> in place of a real
+    name: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">funny_prop1'</span> := <br/>
+&nbsp;&nbsp;<span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span>, <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">_</span> : <span class="id" type="var">beautiful</span> <span class="id" type="var">n</span>), <span class="id" type="var">beautiful</span> (<span class="id" type="var">n</span>+3).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Or, equivalently, we can write it in more familiar notation: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">funny_prop1''</span> := <br/>
+&nbsp;&nbsp;<span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span>, <span class="id" type="var">beautiful</span> <span class="id" type="var">n</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">beautiful</span> (<span class="id" type="var">n</span>+3).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab206"></a><h1 class="section">Conjunction</h1>
+
+<div class="paragraph"> </div>
+
+ The logical conjunction of propositions <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">Q</span></span> can be
+    represented using an <span class="inlinecode"><span class="id" type="keyword">Inductive</span></span> definition with one
+    constructor. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">and</span> (<span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>) : <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">conj</span> : <span class="id" type="var">P</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">Q</span> <span style="font-family: arial;">&rarr;</span> (<span class="id" type="var">and</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Note that, like the definition of <span class="inlinecode"><span class="id" type="var">ev</span></span> in the previous
+    chapter, this definition is parameterized; however, in this case,
+    the parameters are themselves propositions, rather than numbers. 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+The intuition behind this definition is simple: to
+    construct evidence for <span class="inlinecode"><span class="id" type="var">and</span></span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">Q</span></span>, we must provide evidence
+    for <span class="inlinecode"><span class="id" type="var">P</span></span> and evidence for <span class="inlinecode"><span class="id" type="var">Q</span></span>.  More precisely:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">conj</span></span> <span class="inlinecode"><span class="id" type="var">p</span></span> <span class="inlinecode"><span class="id" type="var">q</span></span> can be taken as evidence for <span class="inlinecode"><span class="id" type="var">and</span></span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">Q</span></span> if <span class="inlinecode"><span class="id" type="var">p</span></span>
+      is evidence for <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">q</span></span> is evidence for <span class="inlinecode"><span class="id" type="var">Q</span></span>; and
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> this is the <i>only</i> way to give evidence for <span class="inlinecode"><span class="id" type="var">and</span></span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">Q</span></span> &mdash;
+      that is, if someone gives us evidence for <span class="inlinecode"><span class="id" type="var">and</span></span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">Q</span></span>, we
+      know it must have the form <span class="inlinecode"><span class="id" type="var">conj</span></span> <span class="inlinecode"><span class="id" type="var">p</span></span> <span class="inlinecode"><span class="id" type="var">q</span></span>, where <span class="inlinecode"><span class="id" type="var">p</span></span> is
+      evidence for <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">q</span></span> is evidence for <span class="inlinecode"><span class="id" type="var">Q</span></span>. 
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+   Since we'll be using conjunction a lot, let's introduce a more
+   familiar-looking infix notation for it. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Notation</span> "P <span style="font-family: arial;">&and;</span> Q" := (<span class="id" type="var">and</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span>) : <span class="id" type="var">type_scope</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+(The <span class="inlinecode"><span class="id" type="var">type_scope</span></span> annotation tells Coq that this notation
+    will be appearing in propositions, not values.) 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+Besides the elegance of building everything up from a tiny
+    foundation, what's nice about defining conjunction this way is
+    that we can prove statements involving conjunction using the
+    tactics that we already know.  For example, if the goal statement
+    is a conjuction, we can prove it by applying the single
+    constructor <span class="inlinecode"><span class="id" type="var">conj</span></span>, which (as can be seen from the type of <span class="inlinecode"><span class="id" type="var">conj</span></span>)
+    solves the current goal and leaves the two parts of the
+    conjunction as subgoals to be proved separately. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">and_example</span> : <br/>
+&nbsp;&nbsp;(<span class="id" type="var">beautiful</span> 0) <span style="font-family: arial;">&and;</span> (<span class="id" type="var">beautiful</span> 3).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">conj</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;Case&nbsp;"left".&nbsp;*)</span> <span class="id" type="tactic">apply</span> <span class="id" type="var">b_0</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;Case&nbsp;"right".&nbsp;*)</span> <span class="id" type="tactic">apply</span> <span class="id" type="var">b_3</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Let's take a look at the proof object for the above theorem. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Print</span> <span class="id" type="var">and_example</span>.<br/>
+<span class="comment">(*&nbsp;===&gt;&nbsp;&nbsp;conj&nbsp;(beautiful&nbsp;0)&nbsp;(beautiful&nbsp;3)&nbsp;b_0&nbsp;b_3<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;beautiful&nbsp;0&nbsp;/\&nbsp;beautiful&nbsp;3&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Note that the proof is of the form
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">conj</span>&nbsp;(<span class="id" type="var">beautiful</span>&nbsp;0)&nbsp;(<span class="id" type="var">beautiful</span>&nbsp;3)&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(...<span class="id" type="var">pf</span>&nbsp;<span class="id" type="var">of</span>&nbsp;<span class="id" type="var">beautiful</span>&nbsp;3...)&nbsp;(...<span class="id" type="var">pf</span>&nbsp;<span class="id" type="var">of</span>&nbsp;<span class="id" type="var">beautiful</span>&nbsp;3...)
+<div class="paragraph"> </div>
+
+</div>
+    as you'd expect, given the type of <span class="inlinecode"><span class="id" type="var">conj</span></span>. 
+<div class="paragraph"> </div>
+
+ Just for convenience, we can use the tactic <span class="inlinecode"><span class="id" type="tactic">split</span></span> as a shorthand for
+    <span class="inlinecode"><span class="id" type="tactic">apply</span></span> <span class="inlinecode"><span class="id" type="var">conj</span></span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">and_example'</span> : <br/>
+&nbsp;&nbsp;(<span class="id" type="var">ev</span> 0) <span style="font-family: arial;">&and;</span> (<span class="id" type="var">ev</span> 4).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "left". <span class="id" type="tactic">apply</span> <span class="id" type="var">ev_0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "right". <span class="id" type="tactic">apply</span> <span class="id" type="var">ev_SS</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">ev_SS</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">ev_0</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Conversely, the <span class="inlinecode"><span class="id" type="tactic">inversion</span></span> tactic can be used to take a
+    conjunction hypothesis in the context, calculate what evidence
+    must have been used to build it, and add variables representing
+    this evidence to the proof context. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">proj1</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">Q</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">P</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">HP</span> <span class="id" type="var">HQ</span>].<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">HP</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab207"></a><h4 class="section">Exercise: 1 star, optional (proj2)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">proj2</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">Q</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">Q</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">and_commut</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">Q</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">Q</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">P</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;WORKED&nbsp;IN&nbsp;CLASS&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">HP</span> <span class="id" type="var">HQ</span>].<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(*&nbsp;Case&nbsp;"left".&nbsp;*)</span> <span class="id" type="tactic">apply</span> <span class="id" type="var">HQ</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(*&nbsp;Case&nbsp;"right".*)</span> <span class="id" type="tactic">apply</span> <span class="id" type="var">HP</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Once again, we have commented out the <span class="inlinecode"><span class="id" type="var">Case</span></span> tactics to make the
+    proof object for this theorem easy to understand.  Examining it
+    shows that all that is really happening is taking apart a record
+    containing evidence for <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">Q</span></span> and rebuilding it in the
+    opposite order: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Print</span> <span class="id" type="var">and_commut</span>.<br/>
+<span class="comment">(*&nbsp;===&gt;<br/>
+&nbsp;&nbsp;&nbsp;and_commut&nbsp;=&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fun&nbsp;(P&nbsp;Q&nbsp;:&nbsp;Prop)&nbsp;(H&nbsp;:&nbsp;P&nbsp;/\&nbsp;Q)&nbsp;=&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;H0&nbsp;:=&nbsp;match&nbsp;H&nbsp;with<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;conj&nbsp;HP&nbsp;HQ&nbsp;=&gt;&nbsp;conj&nbsp;Q&nbsp;P&nbsp;HQ&nbsp;HP<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in&nbsp;H0<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;forall&nbsp;P&nbsp;Q&nbsp;:&nbsp;Prop,&nbsp;P&nbsp;/\&nbsp;Q&nbsp;-&gt;&nbsp;Q&nbsp;/\&nbsp;P&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab208"></a><h4 class="section">Exercise: 2 stars (and_assoc)</h4>
+ In the following proof, notice how the <i>nested pattern</i> in the
+    <span class="inlinecode"><span class="id" type="tactic">inversion</span></span> breaks the hypothesis <span class="inlinecode"><span class="id" type="var">H</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span style="font-family: arial;">&and;</span></span> <span class="inlinecode">(<span class="id" type="var">Q</span></span> <span class="inlinecode"><span style="font-family: arial;">&and;</span></span> <span class="inlinecode"><span class="id" type="var">R</span>)</span> down into
+    <span class="inlinecode"><span class="id" type="var">HP</span>:</span> <span class="inlinecode"><span class="id" type="var">P</span></span>, <span class="inlinecode"><span class="id" type="var">HQ</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">Q</span></span>, and <span class="inlinecode"><span class="id" type="var">HR</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">R</span></span>.  Finish the proof from there: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">and_assoc</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">R</span> : <span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&and;</span> (<span class="id" type="var">Q</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">R</span>) <span style="font-family: arial;">&rarr;</span> (<span class="id" type="var">P</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">Q</span>) <span style="font-family: arial;">&and;</span> <span class="id" type="var">R</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">R</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">HP</span> [<span class="id" type="var">HQ</span> <span class="id" type="var">HR</span>]].<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab209"></a><h4 class="section">Exercise: 2 stars, recommended (even__ev)</h4>
+ Now we can prove the other direction of the equivalence of <span class="inlinecode"><span class="id" type="var">even</span></span>
+   and <span class="inlinecode"><span class="id" type="var">ev</span></span>, which we left hanging in chapter <span class="inlinecode"><span class="id" type="keyword">Prop</span></span>.  Notice that the
+   left-hand conjunct here is the statement we are actually interested
+   in; the right-hand conjunct is needed in order to make the
+   induction hypothesis strong enough that we can carry out the
+   reasoning in the inductive step.  (To see why this is needed, try
+   proving the left conjunct by itself and observe where things get
+   stuck.) 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">even__ev</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span> : <span class="id" type="var">nat</span>,<br/>
+&nbsp;&nbsp;(<span class="id" type="var">even</span> <span class="id" type="var">n</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">ev</span> <span class="id" type="var">n</span>) <span style="font-family: arial;">&and;</span> (<span class="id" type="var">even</span> (<span class="id" type="var">S</span> <span class="id" type="var">n</span>) <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">ev</span> (<span class="id" type="var">S</span> <span class="id" type="var">n</span>)).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;Hint:&nbsp;Use&nbsp;induction&nbsp;on&nbsp;<span class="inlinecode"><span class="id" type="var">n</span></span>.&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab210"></a><h4 class="section">Exercise: 2 stars, optional (conj_fact)</h4>
+ Construct a proof object demonstrating the following proposition. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">conj_fact</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">R</span>, <span class="id" type="var">P</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">Q</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">Q</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">R</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">P</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">R</span> :=<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">admit</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab211"></a><h2 class="section">Iff</h2>
+
+<div class="paragraph"> </div>
+
+ The familiar logical "if and only if" is just the
+    conjunction of two implications. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">iff</span> (<span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>) := (<span class="id" type="var">P</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">Q</span>) <span style="font-family: arial;">&and;</span> (<span class="id" type="var">Q</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">P</span>).<br/>
+
+<br/>
+<span class="id" type="keyword">Notation</span> "P <span style="font-family: arial;">&harr;</span> Q" := (<span class="id" type="var">iff</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="tactic">at</span> <span class="id" type="var">level</span> 95, <span class="id" type="var">no</span> <span class="id" type="var">associativity</span>) : <span class="id" type="var">type_scope</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">iff_implies</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;(<span class="id" type="var">P</span> <span style="font-family: arial;">&harr;</span> <span class="id" type="var">Q</span>) <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">P</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">Q</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">HAB</span> <span class="id" type="var">HBA</span>]. <span class="id" type="tactic">apply</span> <span class="id" type="var">HAB</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">iff_sym</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;(<span class="id" type="var">P</span> <span style="font-family: arial;">&harr;</span> <span class="id" type="var">Q</span>) <span style="font-family: arial;">&rarr;</span> (<span class="id" type="var">Q</span> <span style="font-family: arial;">&harr;</span> <span class="id" type="var">P</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;WORKED&nbsp;IN&nbsp;CLASS&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">HAB</span> <span class="id" type="var">HBA</span>].<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "<span style="font-family: arial;">&rarr;</span>". <span class="id" type="tactic">apply</span> <span class="id" type="var">HBA</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "<span style="font-family: arial;">&larr;</span>". <span class="id" type="tactic">apply</span> <span class="id" type="var">HAB</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab212"></a><h4 class="section">Exercise: 1 star, optional (iff_properties)</h4>
+ Using the above proof that <span class="inlinecode"><span style="font-family: arial;">&harr;</span></span> is symmetric (<span class="inlinecode"><span class="id" type="var">iff_sym</span></span>) as
+    a guide, prove that it is also reflexive and transitive. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">iff_refl</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> : <span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&harr;</span> <span class="id" type="var">P</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">iff_trans</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">R</span> : <span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;(<span class="id" type="var">P</span> <span style="font-family: arial;">&harr;</span> <span class="id" type="var">Q</span>) <span style="font-family: arial;">&rarr;</span> (<span class="id" type="var">Q</span> <span style="font-family: arial;">&harr;</span> <span class="id" type="var">R</span>) <span style="font-family: arial;">&rarr;</span> (<span class="id" type="var">P</span> <span style="font-family: arial;">&harr;</span> <span class="id" type="var">R</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Hint: If you have an iff hypothesis in the context, you can use
+    <span class="inlinecode"><span class="id" type="tactic">inversion</span></span> to break it into two separate implications.  (Think
+    about why this works.)  <font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab213"></a><h4 class="section">Exercise: 2 stars, optional (beautiful_iff_gorgeous)</h4>
+
+<div class="paragraph"> </div>
+
+ We have seen that the families of propositions <span class="inlinecode"><span class="id" type="var">beautiful</span></span> and
+    <span class="inlinecode"><span class="id" type="var">gorgeous</span></span> actually characterize the same set of numbers.
+    Prove that <span class="inlinecode"><span class="id" type="var">beautiful</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"><span style="font-family: arial;">&harr;</span></span> <span class="inlinecode"><span class="id" type="var">gorgeous</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> for all <span class="inlinecode"><span class="id" type="var">n</span></span>.  Just for
+    fun, write your proof as an explicit proof object, rather than
+    using tactics. (<i>Hint</i>: if you make use of previously defined
+    theorems, you should only need a single line!) 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">beautiful_iff_gorgeous</span> :<br/>
+&nbsp;&nbsp;<span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span>, <span class="id" type="var">beautiful</span> <span class="id" type="var">n</span> <span style="font-family: arial;">&harr;</span> <span class="id" type="var">gorgeous</span> <span class="id" type="var">n</span> :=<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">admit</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+ Some of Coq's tactics treat <span class="inlinecode"><span class="id" type="var">iff</span></span> statements specially, thus
+    avoiding the need for some low-level manipulation when reasoning
+    with them.  In particular, <span class="inlinecode"><span class="id" type="tactic">rewrite</span></span> can be used with <span class="inlinecode"><span class="id" type="var">iff</span></span>
+    statements, not just equalities. 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab214"></a><h1 class="section">Disjunction</h1>
+
+<div class="paragraph"> </div>
+
+ Disjunction ("logical or") can also be defined as an
+    inductive proposition. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">or</span> (<span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>) : <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">or_introl</span> : <span class="id" type="var">P</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">or</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">or_intror</span> : <span class="id" type="var">Q</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">or</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Notation</span> "P <span style="font-family: arial;">&or;</span> Q" := (<span class="id" type="var">or</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span>) : <span class="id" type="var">type_scope</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Consider the "type" of the constructor <span class="inlinecode"><span class="id" type="var">or_introl</span></span>: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Check</span> <span class="id" type="var">or_introl</span>.<br/>
+<span class="comment">(*&nbsp;===&gt;&nbsp;&nbsp;forall&nbsp;P&nbsp;Q&nbsp;:&nbsp;Prop,&nbsp;P&nbsp;-&gt;&nbsp;P&nbsp;\/&nbsp;Q&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+It takes 3 inputs, namely the propositions <span class="inlinecode"><span class="id" type="var">P</span></span>, <span class="inlinecode"><span class="id" type="var">Q</span></span> and
+    evidence of <span class="inlinecode"><span class="id" type="var">P</span></span>, and returns, as output, the evidence of <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span style="font-family: arial;">&or;</span></span> <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+    Next, look at the type of <span class="inlinecode"><span class="id" type="var">or_intror</span></span>: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Check</span> <span class="id" type="var">or_intror</span>.<br/>
+<span class="comment">(*&nbsp;===&gt;&nbsp;&nbsp;forall&nbsp;P&nbsp;Q&nbsp;:&nbsp;Prop,&nbsp;Q&nbsp;-&gt;&nbsp;P&nbsp;\/&nbsp;Q&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+It is like <span class="inlinecode"><span class="id" type="var">or_introl</span></span> but it requires evidence of <span class="inlinecode"><span class="id" type="var">Q</span></span>
+    instead of evidence of <span class="inlinecode"><span class="id" type="var">P</span></span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+Since <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span style="font-family: arial;">&or;</span></span> <span class="inlinecode"><span class="id" type="var">Q</span></span> has two constructors, doing <span class="inlinecode"><span class="id" type="tactic">inversion</span></span> on a
+    hypothesis of type <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span style="font-family: arial;">&or;</span></span> <span class="inlinecode"><span class="id" type="var">Q</span></span> yields two subgoals. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">or_commut</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">Q</span>  <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">Q</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">P</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">HP</span> | <span class="id" type="var">HQ</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "left". <span class="id" type="tactic">apply</span> <span class="id" type="var">or_intror</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">HP</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "right". <span class="id" type="tactic">apply</span> <span class="id" type="var">or_introl</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">HQ</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+From here on, we'll use the shorthand tactics <span class="inlinecode"><span class="id" type="var">left</span></span> and <span class="inlinecode"><span class="id" type="var">right</span></span>
+    in place of <span class="inlinecode"><span class="id" type="tactic">apply</span></span> <span class="inlinecode"><span class="id" type="var">or_introl</span></span> and <span class="inlinecode"><span class="id" type="tactic">apply</span></span> <span class="inlinecode"><span class="id" type="var">or_intror</span></span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">or_commut'</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">Q</span>  <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">Q</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">P</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">HP</span> | <span class="id" type="var">HQ</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "left". <span class="id" type="var">right</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">HP</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "right". <span class="id" type="var">left</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">HQ</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab215"></a><h4 class="section">Exercise: 2 stars, optional (or_commut'')</h4>
+ Try to write down an explicit proof object for <span class="inlinecode"><span class="id" type="var">or_commut</span></span> (without
+    using <span class="inlinecode"><span class="id" type="keyword">Print</span></span> to peek at the ones we already defined!). 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">or_distributes_over_and_1</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">R</span> : <span class="id" type="keyword">Prop</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> (<span class="id" type="var">Q</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">R</span>) <span style="font-family: arial;">&rarr;</span> (<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">Q</span>) <span style="font-family: arial;">&and;</span> (<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">R</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">R</span>. <span class="id" type="tactic">intros</span> <span class="id" type="var">H</span>. <span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">HP</span> | [<span class="id" type="var">HQ</span> <span class="id" type="var">HR</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "left". <span class="id" type="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "left". <span class="id" type="var">left</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">HP</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "right". <span class="id" type="var">left</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">HP</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "right". <span class="id" type="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "left". <span class="id" type="var">right</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">HQ</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "right". <span class="id" type="var">right</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">HR</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab216"></a><h4 class="section">Exercise: 2 stars, recommended (or_distributes_over_and_2)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">or_distributes_over_and_2</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">R</span> : <span class="id" type="keyword">Prop</span>,<br/>
+&nbsp;&nbsp;(<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">Q</span>) <span style="font-family: arial;">&and;</span> (<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">R</span>) <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> (<span class="id" type="var">Q</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">R</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab217"></a><h4 class="section">Exercise: 1 star, optional (or_distributes_over_and)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">or_distributes_over_and</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">R</span> : <span class="id" type="keyword">Prop</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> (<span class="id" type="var">Q</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">R</span>) <span style="font-family: arial;">&harr;</span> (<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">Q</span>) <span style="font-family: arial;">&and;</span> (<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">R</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab218"></a><h2 class="section">Relating <span class="inlinecode"><span style="font-family: arial;">&and;</span></span> and <span class="inlinecode"><span style="font-family: arial;">&or;</span></span> with <span class="inlinecode"><span class="id" type="var">andb</span></span> and <span class="inlinecode"><span class="id" type="var">orb</span></span></h2>
+
+<div class="paragraph"> </div>
+
+ We've already seen several places where analogous structures
+    can be found in Coq's computational (<span class="inlinecode"><span class="id" type="keyword">Type</span></span>) and logical (<span class="inlinecode"><span class="id" type="keyword">Prop</span></span>)
+    worlds.  Here is one more: the boolean operators <span class="inlinecode"><span class="id" type="var">andb</span></span> and <span class="inlinecode"><span class="id" type="var">orb</span></span>
+    are clearly analogs of the logical connectives <span class="inlinecode"><span style="font-family: arial;">&and;</span></span> and <span class="inlinecode"><span style="font-family: arial;">&or;</span></span>.
+    This analogy can be made more precise by the following theorems,
+    which show how to translate knowledge about <span class="inlinecode"><span class="id" type="var">andb</span></span> and <span class="inlinecode"><span class="id" type="var">orb</span></span>'s
+    behaviors on certain inputs into propositional facts about those
+    inputs. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">andb_true__and</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">b</span> <span class="id" type="var">c</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">andb</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span> = <span class="id" type="var">true</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">b</span> = <span class="id" type="var">true</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">c</span> = <span class="id" type="var">true</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;WORKED&nbsp;IN&nbsp;CLASS&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">destruct</span> <span class="id" type="var">b</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "b = true". <span class="id" type="tactic">destruct</span> <span class="id" type="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "c = true". <span class="id" type="tactic">apply</span> <span class="id" type="var">conj</span>. <span class="id" type="tactic">reflexivity</span>. <span class="id" type="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "c = false". <span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Case</span> "b = false". <span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">and__andb_true</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">b</span> <span class="id" type="var">c</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">b</span> = <span class="id" type="var">true</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">c</span> = <span class="id" type="var">true</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">andb</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span> = <span class="id" type="var">true</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;WORKED&nbsp;IN&nbsp;CLASS&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <span class="id" type="var">H0</span>. <span class="id" type="tactic">rewrite</span> <span class="id" type="var">H1</span>. <span class="id" type="tactic">reflexivity</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab219"></a><h4 class="section">Exercise: 2 stars (bool_prop)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">andb_false</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">b</span> <span class="id" type="var">c</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">andb</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span> = <span class="id" type="var">false</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">b</span> = <span class="id" type="var">false</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">c</span> = <span class="id" type="var">false</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">orb_true</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">b</span> <span class="id" type="var">c</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">orb</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span> = <span class="id" type="var">true</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">b</span> = <span class="id" type="var">true</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">c</span> = <span class="id" type="var">true</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">orb_false</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">b</span> <span class="id" type="var">c</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">orb</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span> = <span class="id" type="var">false</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">b</span> = <span class="id" type="var">false</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">c</span> = <span class="id" type="var">false</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab220"></a><h1 class="section">Falsehood</h1>
+
+<div class="paragraph"> </div>
+
+ Logical falsehood can be represented in Coq as an inductively
+    defined proposition with no constructors. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">False</span> : <span class="id" type="keyword">Prop</span> := .<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Intuition: <span class="inlinecode"><span class="id" type="var">False</span></span> is a proposition for which there is no way
+    to give evidence. 
+<div class="paragraph"> </div>
+
+<a name="lab221"></a><h4 class="section">Exercise: 1 star (False_ind_principle)</h4>
+ Can you predict the induction principle for falsehood? 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;Check&nbsp;False_ind.&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+ Since <span class="inlinecode"><span class="id" type="var">False</span></span> has no constructors, inverting an assumption
+    of type <span class="inlinecode"><span class="id" type="var">False</span></span> always yields zero subgoals, allowing us to
+    immediately prove any goal. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">False_implies_nonsense</span> :<br/>
+&nbsp;&nbsp;<span class="id" type="var">False</span> <span style="font-family: arial;">&rarr;</span> 2 + 2 = 5.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">contra</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">contra</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+How does this work? The <span class="inlinecode"><span class="id" type="tactic">inversion</span></span> tactic breaks <span class="inlinecode"><span class="id" type="var">contra</span></span> into
+    each of its possible cases, and yields a subgoal for each case.
+    As <span class="inlinecode"><span class="id" type="var">contra</span></span> is evidence for <span class="inlinecode"><span class="id" type="var">False</span></span>, it has <i>no</i> possible cases,
+    hence, there are no possible subgoals and the proof is done. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">ex_falso_quodlibet</span> : <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">P</span>:<span class="id" type="keyword">Prop</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">False</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">P</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;WORKED&nbsp;IN&nbsp;CLASS&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">contra</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">contra</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The Latin <i>ex falso quodlibet</i> means, literally, "from
+    falsehood follows whatever you please."  This theorem is also
+    known as the <i>principle of explosion</i>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab222"></a><h2 class="section">Truth</h2>
+
+<div class="paragraph"> </div>
+
+ Since we have defined falsehood in Coq, one might wonder whether
+    it is possible to define truth in the same way.  We can. 
+<div class="paragraph"> </div>
+
+<a name="lab223"></a><h4 class="section">Exercise: 2 stars, optional (True_induction)</h4>
+ Define <span class="inlinecode"><span class="id" type="var">True</span></span> as another inductively defined proposition.  What
+    induction principle will Coq generate for your definition?  (The
+    intution is that <span class="inlinecode"><span class="id" type="var">True</span></span> should be a proposition for which it is
+    trivial to give evidence.  Alternatively, you may find it easiest
+    to start with the induction principle and work backwards to the
+    inductive definition.) 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+ However, unlike <span class="inlinecode"><span class="id" type="var">False</span></span>, which we'll use extensively, <span class="inlinecode"><span class="id" type="var">True</span></span> is
+    just a theoretical curiosity: it is trivial (and therefore
+    uninteresting) to prove as a goal, and it carries no useful
+    information as a hypothesis. 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab224"></a><h1 class="section">Negation</h1>
+
+<div class="paragraph"> </div>
+
+ The logical complement of a proposition <span class="inlinecode"><span class="id" type="var">P</span></span> is written <span class="inlinecode"><span class="id" type="var">not</span></span>
+    <span class="inlinecode"><span class="id" type="var">P</span></span> or, for shorthand, <span class="inlinecode">~<span class="id" type="var">P</span></span>: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">not</span> (<span class="id" type="var">P</span>:<span class="id" type="keyword">Prop</span>) := <span class="id" type="var">P</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">False</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The intuition is that, if <span class="inlinecode"><span class="id" type="var">P</span></span> is not true, then anything at
+    all (even <span class="inlinecode"><span class="id" type="var">False</span></span>) follows from assuming <span class="inlinecode"><span class="id" type="var">P</span></span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Notation</span> "~ x" := (<span class="id" type="var">not</span> <span class="id" type="var">x</span>) : <span class="id" type="var">type_scope</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Check</span> <span class="id" type="var">not</span>.<br/>
+<span class="comment">(*&nbsp;===&gt;&nbsp;Prop&nbsp;-&gt;&nbsp;Prop&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+It takes a little practice to get used to working with
+    negation in Coq.  Even though you can see perfectly well why
+    something is true, it can be a little hard at first to get things
+    into the right configuration so that Coq can see it!  Here are
+    proofs of a few familiar facts about negation to get you warmed
+    up. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">double_neg</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> : <span class="id" type="keyword">Prop</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&rarr;</span> ~~<span class="id" type="var">P</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;WORKED&nbsp;IN&nbsp;CLASS&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">H</span>. <span class="id" type="tactic">unfold</span> <span class="id" type="var">not</span>. <span class="id" type="tactic">intros</span> <span class="id" type="var">G</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">G</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">H</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab225"></a><h4 class="section">Exercise: 2 stars, recommended (double_neg_inf)</h4>
+ Write an informal proof of <span class="inlinecode"><span class="id" type="var">double_neg</span></span>:
+
+<div class="paragraph"> </div>
+
+   <i>Theorem</i>: <span class="inlinecode"><span class="id" type="var">P</span></span> implies <span class="inlinecode">~~<span class="id" type="var">P</span></span>, for any proposition <span class="inlinecode"><span class="id" type="var">P</span></span>.
+
+<div class="paragraph"> </div>
+
+   <i>Proof</i>:
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+   <font size=-2>&#9744;</font>
+
+<div class="paragraph"> </div>
+
+<a name="lab226"></a><h4 class="section">Exercise: 2 stars, recommended (contrapositive)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">contrapositive</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="keyword">Prop</span>,<br/>
+&nbsp;&nbsp;(<span class="id" type="var">P</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">Q</span>) <span style="font-family: arial;">&rarr;</span> (~<span class="id" type="var">Q</span> <span style="font-family: arial;">&rarr;</span> ~<span class="id" type="var">P</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab227"></a><h4 class="section">Exercise: 1 star (not_both_true_and_false)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">not_both_true_and_false</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> : <span class="id" type="keyword">Prop</span>,<br/>
+&nbsp;&nbsp;~ (<span class="id" type="var">P</span> <span style="font-family: arial;">&and;</span> ~<span class="id" type="var">P</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab228"></a><h4 class="section">Exercise: 1 star (informal_not_PNP)</h4>
+ Write an informal proof (in English) of the proposition <span class="inlinecode"><span style="font-family: arial;">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">P</span></span>
+    <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">Prop</span>,</span> <span class="inlinecode">~(<span class="id" type="var">P</span></span> <span class="inlinecode"><span style="font-family: arial;">&and;</span></span> <span class="inlinecode">~<span class="id" type="var">P</span>)</span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">five_not_even</span> :  <br/>
+&nbsp;&nbsp;~ <span class="id" type="var">ev</span> 5.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;WORKED&nbsp;IN&nbsp;CLASS&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">unfold</span> <span class="id" type="var">not</span>. <span class="id" type="tactic">intros</span> <span class="id" type="var">Hev5</span>. <span class="id" type="tactic">inversion</span> <span class="id" type="var">Hev5</span> <span class="id" type="keyword">as</span> [|<span class="id" type="var">n</span> <span class="id" type="var">Hev3</span> <span class="id" type="var">Heqn</span>].<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">Hev3</span> <span class="id" type="keyword">as</span> [|<span class="id" type="var">n'</span> <span class="id" type="var">Hev1</span> <span class="id" type="var">Heqn'</span>]. <span class="id" type="tactic">inversion</span> <span class="id" type="var">Hev1</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab229"></a><h4 class="section">Exercise: 1 star (ev_not_ev_S)</h4>
+ Theorem <span class="inlinecode"><span class="id" type="var">five_not_even</span></span> confirms the unsurprising fact that five
+    is not an even number.  Prove this more interesting fact: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">ev_not_ev_S</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">ev</span> <span class="id" type="var">n</span> <span style="font-family: arial;">&rarr;</span> ~ <span class="id" type="var">ev</span> (<span class="id" type="var">S</span> <span class="id" type="var">n</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">unfold</span> <span class="id" type="var">not</span>. <span class="id" type="tactic">intros</span> <span class="id" type="var">n</span> <span class="id" type="var">H</span>. <span class="id" type="tactic">induction</span> <span class="id" type="var">H</span>. <span class="comment">(*&nbsp;not&nbsp;n!&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab230"></a><h4 class="section">Exercise: 5 stars, optional (classical_axioms)</h4>
+ For those who like a challenge, here is an exercise
+    taken from the Coq'Art book (p. 123).  The following five
+    statements are often considered as characterizations of
+    classical logic (as opposed to constructive logic, which is
+    what is "built in" to Coq).  We can't prove them in Coq, but
+    we can consistently add any one of them as an unproven axiom
+    if we wish to work in classical logic.  Prove that these five
+    propositions are equivalent. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">peirce</span> := <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span>: <span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;((<span class="id" type="var">P</span><span style="font-family: arial;">&rarr;</span><span class="id" type="var">Q</span>)<span style="font-family: arial;">&rarr;</span><span class="id" type="var">P</span>)<span style="font-family: arial;">&rarr;</span><span class="id" type="var">P</span>.<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">classic</span> := <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span>:<span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;~~<span class="id" type="var">P</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">P</span>.<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">excluded_middle</span> := <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span>:<span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span style="font-family: arial;">&or;</span> ~<span class="id" type="var">P</span>.<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">de_morgan_not_and_not</span> := <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span>:<span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;~(~<span class="id" type="var">P</span>/\~<span class="id" type="var">Q</span>) <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">P</span><span style="font-family: arial;">&or;</span><span class="id" type="var">Q</span>.<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">implies_to_or</span> := <span style="font-family: arial;">&forall;</span><span class="id" type="var">P</span> <span class="id" type="var">Q</span>:<span class="id" type="keyword">Prop</span>, <br/>
+&nbsp;&nbsp;(<span class="id" type="var">P</span><span style="font-family: arial;">&rarr;</span><span class="id" type="var">Q</span>) <span style="font-family: arial;">&rarr;</span> (~<span class="id" type="var">P</span><span style="font-family: arial;">&or;</span><span class="id" type="var">Q</span>).<br/>
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab231"></a><h2 class="section">Inequality</h2>
+
+<div class="paragraph"> </div>
+
+ Saying <span class="inlinecode"><span class="id" type="var">x</span></span> <span class="inlinecode">&lt;&gt;</span> <span class="inlinecode"><span class="id" type="var">y</span></span> is just the same as saying <span class="inlinecode">~(<span class="id" type="var">x</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">y</span>)</span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Notation</span> "x &lt;&gt; y" := (~ (<span class="id" type="var">x</span> = <span class="id" type="var">y</span>)) : <span class="id" type="var">type_scope</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab234"></a><h1 class="section">Existential Quantification</h1>
+
+<div class="paragraph"> </div>
+
+ Another critical logical connective is <i>existential
+    quantification</i>.  We can capture what this means with the
+    following definition: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">ex</span> (<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>) (<span class="id" type="var">P</span> : <span class="id" type="var">X</span><span style="font-family: arial;">&rarr;</span><span class="id" type="keyword">Prop</span>) : <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">ex_intro</span> : <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">witness</span>:<span class="id" type="var">X</span>), <span class="id" type="var">P</span> <span class="id" type="var">witness</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">ex</span> <span class="id" type="var">X</span> <span class="id" type="var">P</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+That is, <span class="inlinecode"><span class="id" type="var">ex</span></span> is a family of propositions indexed by a type <span class="inlinecode"><span class="id" type="var">X</span></span>
+    and a property <span class="inlinecode"><span class="id" type="var">P</span></span> over <span class="inlinecode"><span class="id" type="var">X</span></span>.  In order to give evidence for the
+    assertion "there exists an <span class="inlinecode"><span class="id" type="var">x</span></span> for which the property <span class="inlinecode"><span class="id" type="var">P</span></span> holds"
+    we must actually name a <i>witness</i> &mdash; a specific value <span class="inlinecode"><span class="id" type="var">x</span></span> &mdash; and
+    then give evidence for <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">x</span></span>, i.e., evidence that <span class="inlinecode"><span class="id" type="var">x</span></span> has the
+    property <span class="inlinecode"><span class="id" type="var">P</span></span>. 
+
+<div class="paragraph"> </div>
+
+    For example, consider this existentially quantified proposition: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">some_nat_is_even</span> : <span class="id" type="keyword">Prop</span> := <br/>
+&nbsp;&nbsp;<span class="id" type="var">ex</span> <span class="id" type="var">nat</span> <span class="id" type="var">ev</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+To prove this proposition, we need to choose a particular number
+    as witness &mdash; say, 4 &mdash; and give some evidence that that number is
+    even. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">snie</span> : <span class="id" type="var">some_nat_is_even</span> := <br/>
+&nbsp;&nbsp;<span class="id" type="var">ex_intro</span> <span class="id" type="var">_</span> <span class="id" type="var">ev</span> 4 (<span class="id" type="var">ev_SS</span> 2 (<span class="id" type="var">ev_SS</span> 0 <span class="id" type="var">ev_0</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Coq's notation definition facility can be used to introduce
+    more familiar notation for writing existentially quantified
+    propositions, exactly parallel to the built-in syntax for
+    universally quantified propositions.  Instead of writing <span class="inlinecode"><span class="id" type="var">ex</span></span> <span class="inlinecode"><span class="id" type="var">nat</span></span>
+    <span class="inlinecode"><span class="id" type="var">ev</span></span> to express the proposition that there exists some number that
+    is even, for example, we can write <span class="inlinecode"><span style="font-family: arial;">&exist;</span></span> <span class="inlinecode"><span class="id" type="var">x</span>:<span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">ev</span></span> <span class="inlinecode"><span class="id" type="var">x</span></span>.  (It is
+    not necessary to understand exactly how the <span class="inlinecode"><span class="id" type="keyword">Notation</span></span> definition
+    works.) 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Notation</span> "'exists' x , p" := (<span class="id" type="var">ex</span> <span class="id" type="var">_</span> (<span class="id" type="keyword">fun</span> <span class="id" type="var">x</span> =&gt; <span class="id" type="var">p</span>))<br/>
+&nbsp;&nbsp;(<span class="id" type="tactic">at</span> <span class="id" type="var">level</span> 200, <span class="id" type="var">x</span> <span class="id" type="var">ident</span>, <span class="id" type="var">right</span> <span class="id" type="var">associativity</span>) : <span class="id" type="var">type_scope</span>.<br/>
+<span class="id" type="keyword">Notation</span> "'exists' x : X , p" := (<span class="id" type="var">ex</span> <span class="id" type="var">_</span> (<span class="id" type="keyword">fun</span> <span class="id" type="var">x</span>:<span class="id" type="var">X</span> =&gt; <span class="id" type="var">p</span>))<br/>
+&nbsp;&nbsp;(<span class="id" type="tactic">at</span> <span class="id" type="var">level</span> 200, <span class="id" type="var">x</span> <span class="id" type="var">ident</span>, <span class="id" type="var">right</span> <span class="id" type="var">associativity</span>) : <span class="id" type="var">type_scope</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We can use the same set of tactics as always for
+    manipulating existentials.  For example, if to prove an
+    existential, we <span class="inlinecode"><span class="id" type="tactic">apply</span></span> the constructor <span class="inlinecode"><span class="id" type="var">ex_intro</span></span>.  Since the
+    premise of <span class="inlinecode"><span class="id" type="var">ex_intro</span></span> involves a variable (<span class="inlinecode"><span class="id" type="var">witness</span></span>) that does
+    not appear in its conclusion, we need to explicitly give its value
+    when we use <span class="inlinecode"><span class="id" type="tactic">apply</span></span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Example</span> <span class="id" type="var">exists_example_1</span> : <span style="font-family: arial;">&exist;</span><span class="id" type="var">n</span>, <span class="id" type="var">n</span> + (<span class="id" type="var">n</span> * <span class="id" type="var">n</span>) = 6.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">ex_intro</span> <span class="id" type="keyword">with</span> (<span class="id" type="var">witness</span>:=2).<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">reflexivity</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Note, again, that we have to explicitly give the witness. 
+<div class="paragraph"> </div>
+
+ Or, instead of writing <span class="inlinecode"><span class="id" type="tactic">apply</span></span> <span class="inlinecode"><span class="id" type="var">ex_intro</span></span> <span class="inlinecode"><span class="id" type="keyword">with</span></span> <span class="inlinecode">(<span class="id" type="var">witness</span>:=<span class="id" type="var">e</span>)</span> all the
+    time, we can use the convenient shorthand <span class="inlinecode"><span style="font-family: arial;">&exist;</span></span> <span class="inlinecode"><span class="id" type="var">e</span></span>, which means
+    the same thing. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Example</span> <span class="id" type="var">exists_example_1'</span> : <span style="font-family: arial;">&exist;</span><span class="id" type="var">n</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="var">n</span> + (<span class="id" type="var">n</span> * <span class="id" type="var">n</span>) = 6.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span style="font-family: arial;">&exist;</span>2.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">reflexivity</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Conversely, if we have an existential hypothesis in the
+    context, we can eliminate it with <span class="inlinecode"><span class="id" type="tactic">inversion</span></span>.  Note the use
+    of the <span class="inlinecode"><span class="id" type="keyword">as</span>...</span> pattern to name the variable that Coq
+    introduces to name the witness value and get evidence that
+    the hypothesis holds for the witness.  (If we don't
+    explicitly choose one, Coq will just call it <span class="inlinecode"><span class="id" type="var">witness</span></span>, which
+    makes proofs confusing.) 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">exists_example_2</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span>,<br/>
+&nbsp;&nbsp;(<span style="font-family: arial;">&exist;</span><span class="id" type="var">m</span>, <span class="id" type="var">n</span> = 4 + <span class="id" type="var">m</span>) <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;(<span style="font-family: arial;">&exist;</span><span class="id" type="var">o</span>, <span class="id" type="var">n</span> = 2 + <span class="id" type="var">o</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">n</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">m</span> <span class="id" type="var">Hm</span>].<br/>
+&nbsp;&nbsp;<span style="font-family: arial;">&exist;</span>(2 + <span class="id" type="var">m</span>).<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">Hm</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab235"></a><h4 class="section">Exercise: 1 star, optional (english_exists)</h4>
+ In English, what does the proposition 
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">ex</span>&nbsp;<span class="id" type="var">nat</span>&nbsp;(<span class="id" type="keyword">fun</span>&nbsp;<span class="id" type="var">n</span>&nbsp;=&gt;&nbsp;<span class="id" type="var">beautiful</span>&nbsp;(<span class="id" type="var">S</span>&nbsp;<span class="id" type="var">n</span>))
+<div class="paragraph"> </div>
+
+</div>
+    mean? 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Complete the definition of the following proof object: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">p</span> : <span class="id" type="var">ex</span> <span class="id" type="var">nat</span> (<span class="id" type="keyword">fun</span> <span class="id" type="var">n</span> =&gt; <span class="id" type="var">beautiful</span> (<span class="id" type="var">S</span> <span class="id" type="var">n</span>)) :=<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">admit</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab236"></a><h4 class="section">Exercise: 1 star (dist_not_exists)</h4>
+ Prove that "<span class="inlinecode"><span class="id" type="var">P</span></span> holds for all <span class="inlinecode"><span class="id" type="var">x</span></span>" and "there is no <span class="inlinecode"><span class="id" type="var">x</span></span> for
+    which <span class="inlinecode"><span class="id" type="var">P</span></span> does not hold" are equivalent assertions. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">dist_not_exists</span> : <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>) (<span class="id" type="var">P</span> : <span class="id" type="var">X</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span>),<br/>
+&nbsp;&nbsp;(<span style="font-family: arial;">&forall;</span><span class="id" type="var">x</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span>) <span style="font-family: arial;">&rarr;</span> ~ (<span style="font-family: arial;">&exist;</span><span class="id" type="var">x</span>, ~ <span class="id" type="var">P</span> <span class="id" type="var">x</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab237"></a><h4 class="section">Exercise: 3 stars, optional (not_exists_dist)</h4>
+ The other direction requires the classical "law of the excluded
+    middle": 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">not_exists_dist</span> :<br/>
+&nbsp;&nbsp;<span class="id" type="var">excluded_middle</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;<span style="font-family: arial;">&forall;</span>(<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>) (<span class="id" type="var">P</span> : <span class="id" type="var">X</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;~ (<span style="font-family: arial;">&exist;</span><span class="id" type="var">x</span>, ~ <span class="id" type="var">P</span> <span class="id" type="var">x</span>) <span style="font-family: arial;">&rarr;</span> (<span style="font-family: arial;">&forall;</span><span class="id" type="var">x</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab238"></a><h4 class="section">Exercise: 2 stars (dist_exists_or)</h4>
+ Prove that existential quantification distributes over
+    disjunction. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">dist_exists_or</span> : <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>) (<span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="var">X</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span>),<br/>
+&nbsp;&nbsp;(<span style="font-family: arial;">&exist;</span><span class="id" type="var">x</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) <span style="font-family: arial;">&harr;</span> (<span style="font-family: arial;">&exist;</span><span class="id" type="var">x</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span>) <span style="font-family: arial;">&or;</span> (<span style="font-family: arial;">&exist;</span><span class="id" type="var">x</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;Print&nbsp;dist_exists_or.&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab239"></a><h1 class="section">Equality</h1>
+
+</div>
+<div class="code code-space">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">eq'</span> (<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>) (<span class="id" type="var">x</span>:<span class="id" type="var">X</span>) : <span class="id" type="var">X</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">refl_equal'</span> : <span class="id" type="var">eq'</span> <span class="id" type="var">X</span> <span class="id" type="var">x</span> <span class="id" type="var">x</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Notation</span> "x =' y" := (<span class="id" type="var">eq'</span> <span class="id" type="var">_</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="tactic">at</span> <span class="id" type="var">level</span> 70, <span class="id" type="var">no</span> <span class="id" type="var">associativity</span>) : <span class="id" type="var">type_scope</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab240"></a><h4 class="section">Exercise: 3 stars, optional (two_defs_of_eq_coincide)</h4>
+ Verify that the two definitions of equality are equivalent. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">two_defs_of_eq_coincide</span> : <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>) (<span class="id" type="var">x</span> <span class="id" type="var">y</span> : <span class="id" type="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">x</span> = <span class="id" type="var">y</span> <span style="font-family: arial;">&harr;</span> <span class="id" type="var">x</span> =' <span class="id" type="var">y</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+ The advantage of the second definition is that the induction
+    principle that Coq derives for it is precisely the familiar
+    principle of <i>Leibniz equality</i>: what we mean when we say "<span class="inlinecode"><span class="id" type="var">x</span></span> and
+    <span class="inlinecode"><span class="id" type="var">y</span></span> are equal" is that every property on <span class="inlinecode"><span class="id" type="var">P</span></span> that is true of <span class="inlinecode"><span class="id" type="var">x</span></span>
+    is also true of <span class="inlinecode"><span class="id" type="var">y</span></span>.  
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Check</span> <span class="id" type="var">eq'_ind</span>.<br/>
+<span class="comment">(*&nbsp;===&gt;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;(X&nbsp;:&nbsp;Type)&nbsp;(x&nbsp;:&nbsp;X)&nbsp;(P&nbsp;:&nbsp;X&nbsp;-&gt;&nbsp;Prop),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P&nbsp;x&nbsp;-&gt;&nbsp;forall&nbsp;y&nbsp;:&nbsp;X,&nbsp;x&nbsp;='&nbsp;y&nbsp;-&gt;&nbsp;P&nbsp;y&nbsp;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;===&gt;&nbsp;&nbsp;(i.e.,&nbsp;after&nbsp;a&nbsp;little&nbsp;reorganization)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;(X&nbsp;:&nbsp;Type)&nbsp;(x&nbsp;:&nbsp;X)&nbsp;forall&nbsp;y&nbsp;:&nbsp;X,&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;='&nbsp;y&nbsp;-&gt;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;P&nbsp;:&nbsp;X&nbsp;-&gt;&nbsp;Prop,&nbsp;P&nbsp;x&nbsp;-&gt;&nbsp;P&nbsp;y&nbsp;*)</span><br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab241"></a><h2 class="section">Inversion, Again</h2>
+
+<div class="paragraph"> </div>
+
+ We've seen <span class="inlinecode"><span class="id" type="tactic">inversion</span></span> used with both equality hypotheses and
+    hypotheses about inductively defined propositions.  Now that we've
+    seen that these are actually the same thing, we're in a position
+    to take a closer look at how <span class="inlinecode"><span class="id" type="tactic">inversion</span></span> behaves...
+
+<div class="paragraph"> </div>
+
+    In general, the <span class="inlinecode"><span class="id" type="tactic">inversion</span></span> tactic
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> takes a hypothesis <span class="inlinecode"><span class="id" type="var">H</span></span> whose type <span class="inlinecode"><span class="id" type="var">P</span></span> is inductively defined,
+      and
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> for each constructor <span class="inlinecode"><span class="id" type="var">C</span></span> in <span class="inlinecode"><span class="id" type="var">P</span></span>'s definition,
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> generates a new subgoal in which we assume <span class="inlinecode"><span class="id" type="var">H</span></span> was
+        built with <span class="inlinecode"><span class="id" type="var">C</span></span>,
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> adds the arguments (premises) of <span class="inlinecode"><span class="id" type="var">C</span></span> to the context of
+        the subgoal as extra hypotheses,
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> matches the conclusion (result type) of <span class="inlinecode"><span class="id" type="var">C</span></span> against the
+        current goal and calculates a set of equalities that must
+        hold in order for <span class="inlinecode"><span class="id" type="var">C</span></span> to be applicable,
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> adds these equalities to the context (and, for convenience,
+        rewrites them in the goal), and
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> if the equalities are not satisfiable (e.g., they involve
+        things like <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">O</span></span>), immediately solves the subgoal. 
+</li>
+</ul>
+
+</li>
+</ul>
+
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab242"></a><h1 class="section">Relations as Propositions</h1>
+
+<div class="paragraph"> </div>
+
+ A proposition parameterized by a number (such as <span class="inlinecode"><span class="id" type="var">ev</span></span> or
+    <span class="inlinecode"><span class="id" type="var">beautiful</span></span>) can be thought of as a <i>property</i> &mdash; i.e., it defines
+    a subset of <span class="inlinecode"><span class="id" type="var">nat</span></span>, namely those numbers for which the proposition
+    is provable.  In the same way, a two-argument proposition can be
+    thought of as a <i>relation</i> &mdash; i.e., it defines a set of pairs for
+    which the proposition is provable. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">le</span> (<span class="id" type="var">n</span>:<span class="id" type="var">nat</span>) : <span class="id" type="var">nat</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">le_n</span> : <span class="id" type="var">le</span> <span class="id" type="var">n</span> <span class="id" type="var">n</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">le_S</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">m</span>, (<span class="id" type="var">le</span> <span class="id" type="var">n</span> <span class="id" type="var">m</span>) <span style="font-family: arial;">&rarr;</span> (<span class="id" type="var">le</span> <span class="id" type="var">n</span> (<span class="id" type="var">S</span> <span class="id" type="var">m</span>)).<br/>
+
+<br/>
+<span class="id" type="keyword">Notation</span> "m &lt;= n" := (<span class="id" type="var">le</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>).<br/>
+
+<br/>
+<span class="id" type="keyword">Check</span> <span class="id" type="var">le_ind</span>.<br/>
+<span class="comment">(*&nbsp;===&gt;&nbsp;&nbsp;forall&nbsp;(n&nbsp;:&nbsp;nat)&nbsp;(P&nbsp;:&nbsp;nat&nbsp;-&gt;&nbsp;Prop),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P&nbsp;n&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(forall&nbsp;m&nbsp;:&nbsp;nat,&nbsp;n&nbsp;&lt;=&nbsp;m&nbsp;-&gt;&nbsp;P&nbsp;m&nbsp;-&gt;&nbsp;P&nbsp;(S&nbsp;m))&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;n0&nbsp;:&nbsp;nat,&nbsp;n&nbsp;&lt;=&nbsp;n0&nbsp;-&gt;&nbsp;P&nbsp;n0&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab243"></a><h4 class="section">Exercise: 2 stars, recommended (total_relation)</h4>
+ Define an inductive binary relation <span class="inlinecode"><span class="id" type="var">total_relation</span></span> that holds
+    between every pair of natural numbers. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab244"></a><h4 class="section">Exercise: 2 stars (empty_relation)</h4>
+ Define an inductive binary relation <span class="inlinecode"><span class="id" type="var">empty_relation</span></span> (on numbers)
+    that never holds. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab245"></a><h4 class="section">Exercise: 3 stars, recommended (R_provability)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Module</span> <span class="id" type="var">R</span>.<br/>
+</div>
+
+<div class="doc">
+We can define three-place relations, four-place relations,
+    etc., in just the same way as binary relations.  For example,
+    consider the following three-place relation on numbers: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">R</span> : <span class="id" type="var">nat</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">nat</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">nat</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;&nbsp;| <span class="id" type="var">c1</span> : <span class="id" type="var">R</span> 0 0 0 <br/>
+&nbsp;&nbsp;&nbsp;| <span class="id" type="var">c2</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">o</span>, <span class="id" type="var">R</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">o</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">R</span> (<span class="id" type="var">S</span> <span class="id" type="var">m</span>) <span class="id" type="var">n</span> (<span class="id" type="var">S</span> <span class="id" type="var">o</span>)<br/>
+&nbsp;&nbsp;&nbsp;| <span class="id" type="var">c3</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">o</span>, <span class="id" type="var">R</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">o</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">R</span> <span class="id" type="var">m</span> (<span class="id" type="var">S</span> <span class="id" type="var">n</span>) (<span class="id" type="var">S</span> <span class="id" type="var">o</span>)<br/>
+&nbsp;&nbsp;&nbsp;| <span class="id" type="var">c4</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">o</span>, <span class="id" type="var">R</span> (<span class="id" type="var">S</span> <span class="id" type="var">m</span>) (<span class="id" type="var">S</span> <span class="id" type="var">n</span>) (<span class="id" type="var">S</span> (<span class="id" type="var">S</span> <span class="id" type="var">o</span>)) <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">R</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">o</span><br/>
+&nbsp;&nbsp;&nbsp;| <span class="id" type="var">c5</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">o</span>, <span class="id" type="var">R</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">o</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">R</span> <span class="id" type="var">n</span> <span class="id" type="var">m</span> <span class="id" type="var">o</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Which of the following propositions are provable?
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">R</span></span> <span class="inlinecode">1</span> <span class="inlinecode">1</span> <span class="inlinecode">2</span>
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">R</span></span> <span class="inlinecode">2</span> <span class="inlinecode">2</span> <span class="inlinecode">6</span>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+
+</li>
+</ul>
+
+</li>
+<li> If we dropped constructor <span class="inlinecode"><span class="id" type="var">c5</span></span> from the definition of <span class="inlinecode"><span class="id" type="var">R</span></span>,
+      would the set of provable propositions change?  Briefly (1
+      sentence) explain your answer.
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> If we dropped constructor <span class="inlinecode"><span class="id" type="var">c4</span></span> from the definition of <span class="inlinecode"><span class="id" type="var">R</span></span>,
+      would the set of provable propositions change?  Briefly (1
+      sentence) explain your answer.
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+<font size=-2>&#9744;</font>
+
+<div class="paragraph"> </div>
+
+<a name="lab246"></a><h4 class="section">Exercise: 3 stars, optional (R_fact)</h4>
+ State and prove an equivalent characterization of the relation
+    <span class="inlinecode"><span class="id" type="var">R</span></span>.  That is, if <span class="inlinecode"><span class="id" type="var">R</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"><span class="id" type="var">o</span></span> is true, what can we say about <span class="inlinecode"><span class="id" type="var">m</span></span>,
+    <span class="inlinecode"><span class="id" type="var">n</span></span>, and <span class="inlinecode"><span class="id" type="var">o</span></span>, and vice versa?
+
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">End</span> <span class="id" type="var">R</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab247"></a><h4 class="section">Exercise: 3 stars, recommended (all_forallb)</h4>
+ Inductively define a property <span class="inlinecode"><span class="id" type="var">all</span></span> of lists, parameterized by a
+    type <span class="inlinecode"><span class="id" type="var">X</span></span> and a property <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">X</span></span> <span class="inlinecode"><span style="font-family: arial;">&rarr;</span></span> <span class="inlinecode"><span class="id" type="keyword">Prop</span></span>, such that <span class="inlinecode"><span class="id" type="var">all</span></span> <span class="inlinecode"><span class="id" type="var">X</span></span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">l</span></span>
+    asserts that <span class="inlinecode"><span class="id" type="var">P</span></span> is true for every element of the list <span class="inlinecode"><span class="id" type="var">l</span></span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">all</span> (<span class="id" type="var">X</span> : <span class="id" type="keyword">Type</span>) (<span class="id" type="var">P</span> : <span class="id" type="var">X</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span>) : <span class="id" type="var">list</span> <span class="id" type="var">X</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Recall the function <span class="inlinecode"><span class="id" type="var">forallb</span></span>, from the exercise
+    <span class="inlinecode"><span class="id" type="var">forall_exists_challenge</span></span> in chapter <span class="inlinecode"><span class="id" type="var">Poly</span></span>: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">forallb</span> {<span class="id" type="var">X</span> : <span class="id" type="keyword">Type</span>} (<span class="id" type="var">test</span> : <span class="id" type="var">X</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">bool</span>) (<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">X</span>) : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">l</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| [] =&gt; <span class="id" type="var">true</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">x</span> :: <span class="id" type="var">l'</span> =&gt; <span class="id" type="var">andb</span> (<span class="id" type="var">test</span> <span class="id" type="var">x</span>) (<span class="id" type="var">forallb</span> <span class="id" type="var">test</span> <span class="id" type="var">l'</span>)<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Using the property <span class="inlinecode"><span class="id" type="var">all</span></span>, write down a specification for <span class="inlinecode"><span class="id" type="var">forallb</span></span>,
+    and prove that it satisfies the specification. Try to make your 
+    specification as precise as possible.
+
+<div class="paragraph"> </div>
+
+    Are there any important properties of the function <span class="inlinecode"><span class="id" type="var">forallb</span></span> which
+    are not captured by your specification? 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab248"></a><h4 class="section">Exercise: 4 stars, optional (filter_challenge)</h4>
+ One of the main purposes of Coq is to prove that programs match
+    their specifications.  To this end, let's prove that our
+    definition of <span class="inlinecode"><span class="id" type="var">filter</span></span> matches a specification.  Here is the
+    specification, written out informally in English.
+
+<div class="paragraph"> </div>
+
+    Suppose we have a set <span class="inlinecode"><span class="id" type="var">X</span></span>, a function <span class="inlinecode"><span class="id" type="var">test</span>:</span> <span class="inlinecode"><span class="id" type="var">X</span><span style="font-family: arial;">&rarr;</span><span class="id" type="var">bool</span></span>, and a list
+    <span class="inlinecode"><span class="id" type="var">l</span></span> of type <span class="inlinecode"><span class="id" type="var">list</span></span> <span class="inlinecode"><span class="id" type="var">X</span></span>.  Suppose further that <span class="inlinecode"><span class="id" type="var">l</span></span> is an "in-order
+    merge" of two lists, <span class="inlinecode"><span class="id" type="var">l1</span></span> and <span class="inlinecode"><span class="id" type="var">l2</span></span>, such that every item in <span class="inlinecode"><span class="id" type="var">l1</span></span>
+    satisfies <span class="inlinecode"><span class="id" type="var">test</span></span> and no item in <span class="inlinecode"><span class="id" type="var">l2</span></span> satisfies test.  Then <span class="inlinecode"><span class="id" type="var">filter</span></span>
+    <span class="inlinecode"><span class="id" type="var">test</span></span> <span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">l1</span></span>.
+
+<div class="paragraph"> </div>
+
+    A list <span class="inlinecode"><span class="id" type="var">l</span></span> is an "in-order merge" of <span class="inlinecode"><span class="id" type="var">l1</span></span> and <span class="inlinecode"><span class="id" type="var">l2</span></span> if it contains
+    all the same elements as <span class="inlinecode"><span class="id" type="var">l1</span></span> and <span class="inlinecode"><span class="id" type="var">l2</span></span>, in the same order as <span class="inlinecode"><span class="id" type="var">l1</span></span>
+    and <span class="inlinecode"><span class="id" type="var">l2</span></span>, but possibly interleaved.  For example, 
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;&nbsp;&nbsp;[1,4,6,2,3]
+<div class="paragraph"> </div>
+
+</div>
+    is an in-order merge of
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;&nbsp;&nbsp;[1,6,2]
+<div class="paragraph"> </div>
+
+</div>
+    and
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;&nbsp;&nbsp;[4,3].
+<div class="paragraph"> </div>
+
+</div>
+    Your job is to translate this specification into a Coq theorem and
+    prove it.  (Hint: You'll need to begin by defining what it means
+    for one list to be a merge of two others.  Do this with an
+    inductive relation, not a <span class="inlinecode"><span class="id" type="keyword">Fixpoint</span></span>.)  
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab249"></a><h4 class="section">Exercise: 5 stars, optional (filter_challenge_2)</h4>
+ A different way to formally characterize the behavior of <span class="inlinecode"><span class="id" type="var">filter</span></span>
+    goes like this: Among all subsequences of <span class="inlinecode"><span class="id" type="var">l</span></span> with the property
+    that <span class="inlinecode"><span class="id" type="var">test</span></span> evaluates to <span class="inlinecode"><span class="id" type="var">true</span></span> on all their members, <span class="inlinecode"><span class="id" type="var">filter</span></span> <span class="inlinecode"><span class="id" type="var">test</span></span>
+    <span class="inlinecode"><span class="id" type="var">l</span></span> is the longest.  Express this claim formally and prove it. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab250"></a><h4 class="section">Exercise: 4 stars, optional (no_repeats)</h4>
+ The following inductively defined proposition... 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">appears_in</span> {<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>} (<span class="id" type="var">a</span>:<span class="id" type="var">X</span>) : <span class="id" type="var">list</span> <span class="id" type="var">X</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">ai_here</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">l</span>, <span class="id" type="var">appears_in</span> <span class="id" type="var">a</span> (<span class="id" type="var">a</span>::<span class="id" type="var">l</span>)<br/>
+&nbsp;&nbsp;| <span class="id" type="var">ai_later</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">b</span> <span class="id" type="var">l</span>, <span class="id" type="var">appears_in</span> <span class="id" type="var">a</span> <span class="id" type="var">l</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">appears_in</span> <span class="id" type="var">a</span> (<span class="id" type="var">b</span>::<span class="id" type="var">l</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+...gives us a precise way of saying that a value <span class="inlinecode"><span class="id" type="var">a</span></span> appears at
+    least once as a member of a list <span class="inlinecode"><span class="id" type="var">l</span></span>. 
+
+<div class="paragraph"> </div>
+
+    Here's a pair of warm-ups about <span class="inlinecode"><span class="id" type="var">appears_in</span></span>.
+
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">appears_in_app</span> : <span style="font-family: arial;">&forall;</span>{<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>} (<span class="id" type="var">xs</span> <span class="id" type="var">ys</span> : <span class="id" type="var">list</span> <span class="id" type="var">X</span>) (<span class="id" type="var">x</span>:<span class="id" type="var">X</span>), <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">appears_in</span> <span class="id" type="var">x</span> (<span class="id" type="var">xs</span> ++ <span class="id" type="var">ys</span>) <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">appears_in</span> <span class="id" type="var">x</span> <span class="id" type="var">xs</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">appears_in</span> <span class="id" type="var">x</span> <span class="id" type="var">ys</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">app_appears_in</span> : <span style="font-family: arial;">&forall;</span>{<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>} (<span class="id" type="var">xs</span> <span class="id" type="var">ys</span> : <span class="id" type="var">list</span> <span class="id" type="var">X</span>) (<span class="id" type="var">x</span>:<span class="id" type="var">X</span>), <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">appears_in</span> <span class="id" type="var">x</span> <span class="id" type="var">xs</span> <span style="font-family: arial;">&or;</span> <span class="id" type="var">appears_in</span> <span class="id" type="var">x</span> <span class="id" type="var">ys</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">appears_in</span> <span class="id" type="var">x</span> (<span class="id" type="var">xs</span> ++ <span class="id" type="var">ys</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now use <span class="inlinecode"><span class="id" type="var">appears_in</span></span> to define a proposition <span class="inlinecode"><span class="id" type="var">disjoint</span></span> <span class="inlinecode"><span class="id" type="var">X</span></span> <span class="inlinecode"><span class="id" type="var">l1</span></span> <span class="inlinecode"><span class="id" type="var">l2</span></span>,
+    which should be provable exactly when <span class="inlinecode"><span class="id" type="var">l1</span></span> and <span class="inlinecode"><span class="id" type="var">l2</span></span> are
+    lists (with elements of type X) that have no elements in common. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Next, use <span class="inlinecode"><span class="id" type="var">appears_in</span></span> to define an inductive proposition
+    <span class="inlinecode"><span class="id" type="var">no_repeats</span></span> <span class="inlinecode"><span class="id" type="var">X</span></span> <span class="inlinecode"><span class="id" type="var">l</span></span>, which should be provable exactly when <span class="inlinecode"><span class="id" type="var">l</span></span> is a
+    list (with elements of type <span class="inlinecode"><span class="id" type="var">X</span></span>) where every member is different
+    from every other.  For example, <span class="inlinecode"><span class="id" type="var">no_repeats</span></span> <span class="inlinecode"><span class="id" type="var">nat</span></span> <span class="inlinecode">[1,2,3,4]</span> and
+    <span class="inlinecode"><span class="id" type="var">no_repeats</span></span> <span class="inlinecode"><span class="id" type="var">bool</span></span> <span class="inlinecode">[]</span> should be provable, while <span class="inlinecode"><span class="id" type="var">no_repeats</span></span> <span class="inlinecode"><span class="id" type="var">nat</span></span>
+    <span class="inlinecode">[1,2,1]</span> and <span class="inlinecode"><span class="id" type="var">no_repeats</span></span> <span class="inlinecode"><span class="id" type="var">bool</span></span> <span class="inlinecode">[<span class="id" type="var">true</span>,<span class="id" type="var">true</span>]</span> should not be.  
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Finally, state and prove one or more interesting theorems relating
+    <span class="inlinecode"><span class="id" type="var">disjoint</span></span>, <span class="inlinecode"><span class="id" type="var">no_repeats</span></span> and <span class="inlinecode">++</span> (list append).  
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab251"></a><h2 class="section">Digression: More Facts about <span class="inlinecode">&lt;=</span> and <span class="inlinecode">&lt;</span></h2>
+
+<div class="paragraph"> </div>
+
+ Let's pause briefly to record several facts about the <span class="inlinecode">&lt;=</span>
+    and <span class="inlinecode">&lt;</span> relations that we are going to need later in the
+    course.  The proofs make good practice exercises. 
+<div class="paragraph"> </div>
+
+<a name="lab252"></a><h4 class="section">Exercise: 2 stars, optional (le_exercises)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">O_le_n</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span>,<br/>
+&nbsp;&nbsp;0 &lt;= <span class="id" type="var">n</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">n_le_m__Sn_le_Sm</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span> <span class="id" type="var">m</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">n</span> &lt;= <span class="id" type="var">m</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">S</span> <span class="id" type="var">n</span> &lt;= <span class="id" type="var">S</span> <span class="id" type="var">m</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">Sn_le_Sm__n_le_m</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span> <span class="id" type="var">m</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">S</span> <span class="id" type="var">n</span> &lt;= <span class="id" type="var">S</span> <span class="id" type="var">m</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">n</span> &lt;= <span class="id" type="var">m</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">n</span> <span class="id" type="var">m</span>. <span class="id" type="tactic">generalize</span> <span class="id" type="tactic">dependent</span> <span class="id" type="var">n</span>. <span class="id" type="tactic">induction</span> <span class="id" type="var">m</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">le_plus_l</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">a</span> <span class="id" type="var">b</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">a</span> &lt;= <span class="id" type="var">a</span> + <span class="id" type="var">b</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">plus_lt</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n1</span> <span class="id" type="var">n2</span> <span class="id" type="var">m</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">n1</span> + <span class="id" type="var">n2</span> &lt; <span class="id" type="var">m</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;<span class="id" type="var">n1</span> &lt; <span class="id" type="var">m</span> <span style="font-family: arial;">&and;</span> <span class="id" type="var">n2</span> &lt; <span class="id" type="var">m</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">lt_S</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span> <span class="id" type="var">m</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">n</span> &lt; <span class="id" type="var">m</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;<span class="id" type="var">n</span> &lt; <span class="id" type="var">S</span> <span class="id" type="var">m</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">ble_nat_true</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span> <span class="id" type="var">m</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">ble_nat</span> <span class="id" type="var">n</span> <span class="id" type="var">m</span> = <span class="id" type="var">true</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">n</span> &lt;= <span class="id" type="var">m</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">ble_nat_n_Sn_false</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span> <span class="id" type="var">m</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">ble_nat</span> <span class="id" type="var">n</span> (<span class="id" type="var">S</span> <span class="id" type="var">m</span>) = <span class="id" type="var">false</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;<span class="id" type="var">ble_nat</span> <span class="id" type="var">n</span> <span class="id" type="var">m</span> = <span class="id" type="var">false</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">ble_nat_false</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">n</span> <span class="id" type="var">m</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">ble_nat</span> <span class="id" type="var">n</span> <span class="id" type="var">m</span> = <span class="id" type="var">false</span> <span style="font-family: arial;">&rarr;</span> ~(<span class="id" type="var">n</span> &lt;= <span class="id" type="var">m</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;Hint:&nbsp;Do&nbsp;the&nbsp;right&nbsp;induction!&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab253"></a><h4 class="section">Exercise: 3 stars, recommended (nostutter)</h4>
+ Formulating inductive definitions of predicates is an important
+    skill you'll need in this course.  Try to solve this exercise
+    without any help at all (except from your study group partner, if
+    you have one).
+
+<div class="paragraph"> </div>
+
+    We say that a list of numbers "stutters" if it repeats the same
+    number consecutively.  The predicate "<span class="inlinecode"><span class="id" type="var">nostutter</span></span> <span class="inlinecode"><span class="id" type="var">mylist</span></span>" means
+    that <span class="inlinecode"><span class="id" type="var">mylist</span></span> does not stutter.  Formulate an inductive definition
+    for <span class="inlinecode"><span class="id" type="var">nostutter</span></span>.  (This is different from the <span class="inlinecode"><span class="id" type="var">no_repeats</span></span>
+    predicate in the exercise above; the sequence <span class="inlinecode">1,4,1</span> repeats but
+    does not stutter.) 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">nostutter</span>:  <span class="id" type="var">list</span> <span class="id" type="var">nat</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Make sure each of these tests succeeds, but you are free
+    to change the proof if the given one doesn't work for you.
+    Your definition might be different from mine and still correct,
+    in which case the examples might need a different proof.
+
+<div class="paragraph"> </div>
+
+    The suggested proofs for the examples (in comments) use a number
+    of tactics we haven't talked about, to try to make them robust
+    with respect to different possible ways of defining <span class="inlinecode"><span class="id" type="var">nostutter</span></span>.
+    You should be able to just uncomment and use them as-is, but if
+    you prefer you can also prove each example with more basic
+    tactics.  
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Example</span> <span class="id" type="var">test_nostutter_1</span>:      <span class="id" type="var">nostutter</span> [3,1,4,1,5,6].<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+<span class="comment">(*&nbsp;<br/>
+&nbsp;&nbsp;Proof.&nbsp;repeat&nbsp;constructor;&nbsp;apply&nbsp;beq_false_not_eq;&nbsp;auto.&nbsp;Qed.<br/>
+*)</span><br/>
+
+<br/>
+<span class="id" type="keyword">Example</span> <span class="id" type="var">test_nostutter_2</span>:  <span class="id" type="var">nostutter</span> [].<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+<span class="comment">(*&nbsp;<br/>
+&nbsp;&nbsp;Proof.&nbsp;repeat&nbsp;constructor;&nbsp;apply&nbsp;beq_false_not_eq;&nbsp;auto.&nbsp;Qed.<br/>
+*)</span><br/>
+
+<br/>
+<span class="id" type="keyword">Example</span> <span class="id" type="var">test_nostutter_3</span>:  <span class="id" type="var">nostutter</span> [5].<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+<span class="comment">(*&nbsp;<br/>
+&nbsp;&nbsp;Proof.&nbsp;repeat&nbsp;constructor;&nbsp;apply&nbsp;beq_false_not_eq;&nbsp;auto.&nbsp;Qed.<br/>
+*)</span><br/>
+
+<br/>
+<span class="id" type="keyword">Example</span> <span class="id" type="var">test_nostutter_4</span>:      <span class="id" type="var">not</span> (<span class="id" type="var">nostutter</span> [3,1,1,4]).<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+<span class="comment">(*&nbsp;<br/>
+&nbsp;&nbsp;Proof.&nbsp;intro.<br/>
+&nbsp;&nbsp;repeat&nbsp;match&nbsp;goal&nbsp;with&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;h:&nbsp;nostutter&nbsp;_&nbsp;|-&nbsp;_&nbsp;=&gt;&nbsp;inversion&nbsp;h;&nbsp;clear&nbsp;h;&nbsp;subst&nbsp;<br/>
+&nbsp;&nbsp;end.<br/>
+&nbsp;&nbsp;contradiction&nbsp;H1;&nbsp;auto.&nbsp;Qed.<br/>
+*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab254"></a><h4 class="section">Exercise: 4 stars, optional (pigeonhole principle)</h4>
+ The "pigeonhole principle" states a basic fact about counting:
+   if you distribute more than <span class="inlinecode"><span class="id" type="var">n</span></span> items into <span class="inlinecode"><span class="id" type="var">n</span></span> pigeonholes, some 
+   pigeonhole must contain at least two items.  As is often the case,
+   this apparently trivial fact about numbers requires non-trivial
+   machinery to prove, but we now have enough... 
+<div class="paragraph"> </div>
+
+ First a pair of useful lemmas... (we already proved this for lists
+    of naturals, but not for arbitrary lists.) 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">app_length</span> : <span style="font-family: arial;">&forall;</span>{<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>} (<span class="id" type="var">l1</span> <span class="id" type="var">l2</span> : <span class="id" type="var">list</span> <span class="id" type="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">length</span> (<span class="id" type="var">l1</span> ++ <span class="id" type="var">l2</span>) = <span class="id" type="var">length</span> <span class="id" type="var">l1</span> + <span class="id" type="var">length</span> <span class="id" type="var">l2</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">appears_in_app_split</span> : <span style="font-family: arial;">&forall;</span>{<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>} (<span class="id" type="var">x</span>:<span class="id" type="var">X</span>) (<span class="id" type="var">l</span>:<span class="id" type="var">list</span> <span class="id" type="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">appears_in</span> <span class="id" type="var">x</span> <span class="id" type="var">l</span> <span style="font-family: arial;">&rarr;</span> <br/>
+&nbsp;&nbsp;<span style="font-family: arial;">&exist;</span><span class="id" type="var">l1</span>, <span style="font-family: arial;">&exist;</span><span class="id" type="var">l2</span>, <span class="id" type="var">l</span> = <span class="id" type="var">l1</span> ++ (<span class="id" type="var">x</span>::<span class="id" type="var">l2</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now define a predicate <span class="inlinecode"><span class="id" type="var">repeats</span></span> (analogous to <span class="inlinecode"><span class="id" type="var">no_repeats</span></span> in the
+   exercise above), such that <span class="inlinecode"><span class="id" type="var">repeats</span></span> <span class="inlinecode"><span class="id" type="var">X</span></span> <span class="inlinecode"><span class="id" type="var">l</span></span> asserts that <span class="inlinecode"><span class="id" type="var">l</span></span> contains
+   at least one repeated element (of type <span class="inlinecode"><span class="id" type="var">X</span></span>).  
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">repeats</span> {<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>} : <span class="id" type="var">list</span> <span class="id" type="var">X</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now here's a way to formalize the pigeonhole principle. List <span class="inlinecode"><span class="id" type="var">l2</span></span>
+   represents a list of pigeonhole labels, and list <span class="inlinecode"><span class="id" type="var">l1</span></span> represents an
+   assignment of items to labels: if there are more items than labels,
+   at least two items must have the same label.  You will almost
+   certainly need to use the <span class="inlinecode"><span class="id" type="var">excluded_middle</span></span> hypothesis. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">pigeonhole_principle</span>: <span style="font-family: arial;">&forall;</span>{<span class="id" type="var">X</span>:<span class="id" type="keyword">Type</span>} (<span class="id" type="var">l1</span> <span class="id" type="var">l2</span>:<span class="id" type="var">list</span> <span class="id" type="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">excluded_middle</span> <span style="font-family: arial;">&rarr;</span> <br/>
+&nbsp;&nbsp;(<span style="font-family: arial;">&forall;</span><span class="id" type="var">x</span>, <span class="id" type="var">appears_in</span> <span class="id" type="var">x</span> <span class="id" type="var">l1</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">appears_in</span> <span class="id" type="var">x</span> <span class="id" type="var">l2</span>) <span style="font-family: arial;">&rarr;</span> <br/>
+&nbsp;&nbsp;<span class="id" type="var">length</span> <span class="id" type="var">l2</span> &lt; <span class="id" type="var">length</span> <span class="id" type="var">l1</span> <span style="font-family: arial;">&rarr;</span> <br/>
+&nbsp;&nbsp;<span class="id" type="var">repeats</span> <span class="id" type="var">l1</span>.<br/>
+<span class="id" type="keyword">Proof</span>. <span class="id" type="tactic">intros</span> <span class="id" type="var">X</span> <span class="id" type="var">l1</span>. <span class="id" type="tactic">induction</span> <span class="id" type="var">l1</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="coqindex.html">Index</a><hr/>This page has been generated by <a href="http://www.lix.polytechnique.fr/coq/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
