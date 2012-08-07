@@ -99,7 +99,7 @@ Proof. simpl. reflexivity.  Qed.
     languages.  Indeed, this is one of the main uses for which Coq was
     developed.  We won't have space to dig further into this topic,
     but more information can be found in the Coq'Art book by Bertot
-    and Castéran, as well as the Coq reference manual. *)
+    and Cast\u00e9ran, as well as the Coq reference manual. *)
 
 (* ###################################################################### *)
 (** ** Booleans *)
@@ -179,33 +179,37 @@ Definition admit {T: Type} : T.  Admitted.
     its inputs are [false]. *)
 
 Definition nandb (b1:bool) (b2:bool) : bool :=
-  (* FILL IN HERE *) admit.
+  match b1 with
+  | true => negb b2
+  | false => true
+  end.
+
 
 (** Remove "[Admitted.]" and fill in each proof with 
     "[Proof. simpl. reflexivity. Qed.]" *)
 
 Example test_nandb1:               (nandb true false) = true.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 Example test_nandb2:               (nandb false false) = true.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 Example test_nandb3:               (nandb false true) = true.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 Example test_nandb4:               (nandb true true) = false.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 (** [] *)
 
 (** **** Exercise: 1 star (andb3) *)
 Definition andb3 (b1:bool) (b2:bool) (b3:bool) : bool :=
-  (* FILL IN HERE *) admit.
+  andb (andb b1 b2) b3.
 
 Example test_andb31:                 (andb3 true true true) = true.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 Example test_andb32:                 (andb3 false true true) = false.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 Example test_andb33:                 (andb3 true false true) = false.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 Example test_andb34:                 (andb3 true true false) = false.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 (** [] *)
 
 (* ###################################################################### *)
@@ -436,12 +440,15 @@ Proof. simpl. reflexivity.  Qed.
     Translate this into Coq. *)
 
 Fixpoint factorial (n:nat) : nat := 
-(* FILL IN HERE *) admit.
+  match n with
+    | O => S O
+    | S p => mult n (factorial p)
+  end.
 
 Example test_factorial1:          (factorial 3) = 6.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 Example test_factorial2:          (factorial 5) = (mult 10 12).
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 (** [] *)
 
 (** We can make numerical expressions a little easier to read and
