@@ -1,6 +1,6 @@
 (** * Lists: Working with Structured Data *)
 
-(* $Date: 2012-07-23 16:55:31 -0400 (Mon, 23 Jul 2012) $ *)
+(* $Date: 2012-09-08 20:51:57 -0400 (Sat, 08 Sep 2012) $ *)
 
 (** The next line imports all of our definitions from the
     previous chapter. *)
@@ -527,7 +527,6 @@ Proof.
     help the reader stay oriented if we remind them exactly what the
     induction hypothesis is in the second case.  *)
 
-
 (** _Theorem_: For all lists [l1], [l2], and [l3], 
    [(l1 ++ l2) ++ l3 = l1 ++ (l2 ++ l3)].
 
@@ -718,7 +717,7 @@ Proof.
     throughout the rest of the course; it can save you a lot of time! *)
     
 (** Also, if you are using ProofGeneral, you can run [SearchAbout]
-    with [C-c C-f]. Pasting its response into your buffer can be
+    with [C-c C-a C-a]. Pasting its response into your buffer can be
     accomplished with [C-c C-;]. *)
 
 (* ###################################################### *)
@@ -738,12 +737,6 @@ Theorem rev_involutive : forall l : natlist,
 Proof.
   (* FILL IN HERE *) Admitted.
 
-
-Theorem distr_rev : forall l1 l2 : natlist,
-  rev (l1 ++ l2) = (rev l2) ++ (rev l1).
-Proof.
-  (* FILL IN HERE *) Admitted.
-
 (** There is a short solution to the next exercise.  If you find
     yourself getting tangled up, step back and try to look for a
     simpler way. *)
@@ -755,6 +748,12 @@ Proof.
 
 Theorem snoc_append : forall (l:natlist) (n:nat),
   snoc l n = l ++ [n].
+Proof.
+  (* FILL IN HERE *) Admitted.
+
+
+Theorem distr_rev : forall l1 l2 : natlist,
+  rev (l1 ++ l2) = (rev l2) ++ (rev l1).
 Proof.
   (* FILL IN HERE *) Admitted.
 

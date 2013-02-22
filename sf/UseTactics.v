@@ -1,6 +1,6 @@
 (** * UseTactics: Tactic Library for Coq: A Gentle Introduction *)
 
-(* $Date: 2012-07-22 18:36:58 -0400 (Sun, 22 Jul 2012) $ *)
+(* $Date: 2012-08-08 20:21:51 -0400 (Wed, 08 Aug 2012) $ *)
 (* Chapter maintained by Arthur Chargueraud *)
 
 (** Coq comes with a set of builtin tactics, such as [reflexivity],
@@ -100,7 +100,7 @@ Theorem exists_impl: forall X (P : X -> Prop) (Q : Prop) (R : Prop),
 Proof.
   introv [x H2]. eauto.
   (* same as [intros X P Q R H1 [x H2].], which is itself short 
-     for [intros X P Q R H1 [x H2]. destruct H2 as [x H2].] *)
+     for [intros X P Q R H1 H2. destruct H2 as [x H2].] *)
 Qed.
 
 (** Remark: the tactic [introv] works even when definitions 
@@ -255,7 +255,7 @@ Qed.
 
 End InvertsExamples.
 
-(** Note: in the rare cases where one need to perform an inversion
+(** Note: in the rare cases where one needs to perform an inversion
     on an hypothesis [H] without clearing [H] from the context,
     one can use the tactic [inverts keep H], where the keyword [keep]
     indicates that the hypothesis should be kept in the context. *)
@@ -269,7 +269,7 @@ Module CasesExample.
   Import STLC.
 
 (** As you probably have learned, the tactic [destruct] can be used
-    to perform a case analysis. However, this tactic sometimes destroy
+    to perform a case analysis. However, this tactic sometimes destroys
     useful information. The tactic [remember] is intended to introduce
     an equality that avoids [destruct] loosing such useful information.
     The tactic [cases] provided by [LibTactics] packages [remember]
@@ -382,7 +382,7 @@ Admitted.
 (* ####################################################### *)
 (** ** The tactic [branch] *)
 
-(** The tactic [branch k] can be used to proved a n-ary disjunction.
+(** The tactic [branch k] can be used to prove a n-ary disjunction.
     For example, if the goal takes the form [G1 \/ G2 \/ G3],
     the tactic [branch 2] leaves only [G2] as subgoal. The following
     example illustrates the behavior of the [branch] tactic. *)
@@ -989,7 +989,7 @@ Admitted.
     In this case, the name [H] is chosen arbitrarily.
 
     Note: the tactics [lets] accepts up to five arguments. Another
-    syntax if available for providing more than five arguments.
+    syntax is available for providing more than five arguments.
     It consists in using a list introduced with the special symbol [>>],
     for example [lets H: (>> E0 E1 E2 E3 E4 E5 E6 E7 E8 E9 10)]. *)
 
@@ -1018,9 +1018,8 @@ End ExamplesLets.
     More precisely, [specializes H E0 E1] is the same as 
     [lets H': H E0 E1] followed with [clear H] and [rename H' into H].
 
-    Examples of use of [applys] appear further on. Several examples 
-    of use of [specializes] and [forwards] can be found in the 
-    tutorial chapter [UseAuto]. *)
+    Examples of use of [applys] appear further on. Several examples of
+    use of [forwards] can be found in the tutorial chapter [UseAuto]. *)
 
 
 (* ####################################################### *)

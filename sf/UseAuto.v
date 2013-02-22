@@ -1,6 +1,6 @@
 (** * UseAuto: Theory and Practice of Automation in Coq Proofs *)
 
-(* $Date: 2012-04-23 14:08:14 -0400 (Mon, 23 Apr 2012) $ *)
+(* $Date: 2012-08-08 20:21:51 -0400 (Wed, 08 Aug 2012) $ *)
 (* Chapter maintained by Arthur Chargueraud *)
 
 (** In a machine-checked proof, every single detail has to be
@@ -572,7 +572,7 @@ Proof. intros P H1 H3 H2. (* debug *) eauto. Qed.
     hypothesis, one can type [generalize mylemma; intros], or simply
     [lets: mylemma] (the latter requires [LibTactics.v]).
     
-    The second possibility is useful for lemmas that needs to be
+    The second possibility is useful for lemmas that need to be
     exploited several times. The syntax for adding a lemma as a hint
     is [Hint Resolve mylemma]. For example, the lemma asserting than
     any number is less than or equal to itself, [forall x, x <= x],
@@ -952,7 +952,7 @@ Qed.
 
 (** If we try to combine the two proofs into a single one,
     we will likely fail, because of a limitation of the 
-    tactic [induction]. Indeed, this tactic looses
+    [induction] tactic. Indeed, this tactic looses
     information when applied to a predicate whose arguments
     are not reduced to variables, such as [t ==>* (C n)].
     You will thus need to use the more powerful tactic called
@@ -1612,7 +1612,7 @@ End HintsTransitivity.
     transitivity, which produces two subgoals, [subtype S ?X] and
     [subtype ?X T]. Solving the first subgoal, [subtype S ?X], is
     straightforward, it suffices to apply reflexivity. This unifies
-    [?X] with [S]. So, the second sugoal, [subtype ?X T], becomes
+    [?X] with [S]. So, the second sugoal, [subtype ?X T],
     becomes [subtype S T], which is exactly what we started from...
 
     The problem with the transitivity lemma is that it is applicable
@@ -1659,8 +1659,8 @@ Hint Extern 1 (subtype ?S ?U) =>
     - The symbol [|- _] at the end of [H: subtype S ?T |- _] indicates
       that we do not impose further condition on how the proof 
       obligation has to look like.
-    - The branch [=> apply subtype_trans with (T:=T)] that follows
-      indicate that if the goal has the form [subtype S U] and if
+    - The branch [=> apply (@subtype_trans S T U)] that follows
+      indicates that if the goal has the form [subtype S U] and if
       there exists an hypothesis of the form [subtype S T], then
       we should try and apply transitivity lemma instantiated on
       the arguments [S], [T] and [U]. (Note: the symbol [@] in front of
@@ -1846,7 +1846,7 @@ Proof. congruence. Qed.
       exponentially slow.
 
     - [jauto] extends [eauto] with support for  negation, conjunctions, and 
-      existential at the head of hypothese.
+      existential at the head of hypothesis.
 
     - [congruence] helps reasoning about equalities and inequalities.
 

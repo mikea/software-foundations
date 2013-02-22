@@ -1,6 +1,6 @@
 (** * Poly: Polymorphism and Higher-Order Functions *)
 
-(* $Date: 2012-07-25 16:43:16 -0400 (Wed, 25 Jul 2012) $ *)
+(* $Date: 2012-09-08 20:51:57 -0400 (Sat, 08 Sep 2012) $ *)
 
 Require Export Lists.
 
@@ -330,6 +330,11 @@ Theorem rev_snoc : forall X : Type,
   rev (snoc s v) = v :: (rev s).
 Proof.
   (* FILL IN HERE *) Admitted.
+
+Theorem rev_involutive : forall X : Type, forall l : list X,
+  rev (rev l) = l.
+Proof.
+(* FILL IN HERE *) Admitted.
 
 Theorem snoc_with_append : forall X : Type, 
                          forall l1 l2 : list X,
@@ -837,7 +842,6 @@ Proof. reflexivity. Qed.
 
 Example fold_example3 : fold app  [[1],[],[2,3],[4]] [] = [1,2,3,4].
 Proof. reflexivity. Qed.
-
 
 (** **** Exercise: 1 star, optional (fold_types_different) *)
 (** Observe that the type of [fold] is parameterized by _two_ type
@@ -1378,7 +1382,7 @@ Proof.
   (* FILL IN HERE *) Admitted.
 
 Theorem beq_nat_0_r : forall n,
-  true = beq_nat n 0 -> 0 = n.
+  true = beq_nat 0 n -> 0 = n.
 Proof.
   (* FILL IN HERE *) Admitted.
 (** [] *)
