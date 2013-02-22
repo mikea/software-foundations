@@ -127,7 +127,124 @@ In the previous chapter, we noticed the importance of
 </div>
 
 <div class="doc">
-The good proof of <span class="inlinecode"><span class="id" type="var">double_injective</span></span> leaves <span class="inlinecode"><span class="id" type="var">m</span></span> in the goal
+What went wrong?  
+
+<div class="paragraph"> </div>
+
+    The problem is that, at the point we invoke the induction
+    hypothesis, we have already introduced <span class="inlinecode"><span class="id" type="var">m</span></span> into the context
+ intuitively, we have told Coq, "Let's consider some particular
+    <span class="inlinecode"><span class="id" type="var">n</span></span> and <span class="inlinecode"><span class="id" type="var">m</span></span>..." and we now have to prove that, if <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span>
+    <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> for <i>this particular</i> <span class="inlinecode"><span class="id" type="var">n</span></span> and <span class="inlinecode"><span class="id" type="var">m</span></span>, then <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span>.
+
+<div class="paragraph"> </div>
+
+    The next tactic, <span class="inlinecode"><span class="id" type="tactic">induction</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> says to Coq: We are going to show
+    the goal by induction on <span class="inlinecode"><span class="id" type="var">n</span></span>.  That is, we are going to prove that
+    the proposition
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span>  =  "if <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span>, then <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span>"
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+    holds for all <span class="inlinecode"><span class="id" type="var">n</span></span> by showing
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">O</span></span>              
+
+<div class="paragraph"> </div>
+
+         (i.e., "if <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">O</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> then <span class="inlinecode"><span class="id" type="var">O</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span>")
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"><span style="font-family: arial;">&rarr;</span></span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span>  
+
+<div class="paragraph"> </div>
+
+        (i.e., "if <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> then <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span>" implies "if
+        <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> then <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span>").
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+    If we look closely at the second statement, it is saying something
+    rather strange: it says that, for a <i>particular</i> <span class="inlinecode"><span class="id" type="var">m</span></span>, if we know
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> "if <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> then <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span>"
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+    then we can prove
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> "if <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> then <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span>".
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+    To see why this is strange, let's think of a particular <span class="inlinecode"><span class="id" type="var">m</span></span> &mdash;
+    say, <span class="inlinecode">5</span>.  The statement is then saying that, if we can prove
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">Q</span></span> = "if <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode">10</span> then <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode">5</span>"
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+    then we can prove
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">R</span></span> = "if <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode">10</span> then <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode">5</span>".
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+    But knowing <span class="inlinecode"><span class="id" type="var">Q</span></span> doesn't give us any help with proving <span class="inlinecode"><span class="id" type="var">R</span></span>!  (If we
+    tried to prove <span class="inlinecode"><span class="id" type="var">R</span></span> from <span class="inlinecode"><span class="id" type="var">Q</span></span>, we would say something like "Suppose
+    <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode">10</span>..." but then we'd be stuck: knowing that
+    <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> is <span class="inlinecode">10</span> tells us nothing about whether <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span>
+    is <span class="inlinecode">10</span>, so <span class="inlinecode"><span class="id" type="var">Q</span></span> is useless at this point.)
+
+<div class="paragraph"> </div>
+
+    To summarize: Trying to carry out this proof by induction on <span class="inlinecode"><span class="id" type="var">n</span></span>
+    when <span class="inlinecode"><span class="id" type="var">m</span></span> is already in the context doesn't work because we are
+    trying to prove a relation involving <i>every</i> <span class="inlinecode"><span class="id" type="var">n</span></span> but just a
+    <i>single</i> <span class="inlinecode"><span class="id" type="var">m</span></span>. 
+<div class="paragraph"> </div>
+
+ The good proof of <span class="inlinecode"><span class="id" type="var">double_injective</span></span> leaves <span class="inlinecode"><span class="id" type="var">m</span></span> in the goal
     statement at the point where the <span class="inlinecode"><span class="id" type="tactic">induction</span></span> tactic is invoked on
     <span class="inlinecode"><span class="id" type="var">n</span></span>: 
 </div>
@@ -177,7 +294,13 @@ The good proof of <span class="inlinecode"><span class="id" type="var">double_in
 </div>
 
 <div class="doc">
-However, this strategy doesn't always apply directly; sometimes a
+What this teaches us is that we need to be careful about using
+    induction to try to prove something too specific: If we're proving
+    a property of <span class="inlinecode"><span class="id" type="var">n</span></span> and <span class="inlinecode"><span class="id" type="var">m</span></span> by induction on <span class="inlinecode"><span class="id" type="var">n</span></span>, we may need to
+    leave <span class="inlinecode"><span class="id" type="var">m</span></span> generic. 
+<div class="paragraph"> </div>
+
+ However, this strategy doesn't always apply directly; sometimes a
     little rearrangement is needed.  Suppose, for example, that we had
     decided we wanted to prove <span class="inlinecode"><span class="id" type="var">double_injective</span></span> by induction on <span class="inlinecode"><span class="id" type="var">m</span></span>
     instead of <span class="inlinecode"><span class="id" type="var">n</span></span>. 
@@ -209,14 +332,17 @@ The problem is that, to do induction on <span class="inlinecode"><span class="id
     introduce <span class="inlinecode"><span class="id" type="var">n</span></span>.  (If we simply say <span class="inlinecode"><span class="id" type="tactic">induction</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> without
     introducing anything first, Coq will automatically introduce
     <span class="inlinecode"><span class="id" type="var">n</span></span> for us!)   
-</div>
-<div class="code code-tight">
+<div class="paragraph"> </div>
 
-<br/>
-</div>
+ What can we do about this?  One possibility is to rewrite the
+    statement of the lemma so that <span class="inlinecode"><span class="id" type="var">m</span></span> is quantified before <span class="inlinecode"><span class="id" type="var">n</span></span>.  This
+    will work, but it's not nice: We don't want to have to mangle the
+    statements of lemmas to fit the needs of a particular strategy for
+    proving them &mdash; we want to state them in the most clear and
+    natural way. 
+<div class="paragraph"> </div>
 
-<div class="doc">
- What we can do instead is to first introduce all the
+  What we can do instead is to first introduce all the
     quantified variables and then <i>re-generalize</i> one or more of
     them, taking them out of the context and putting them back at
     the beginning of the goal.  The <span class="inlinecode"><span class="id" type="tactic">generalize</span></span> <span class="inlinecode"><span class="id" type="tactic">dependent</span></span> tactic

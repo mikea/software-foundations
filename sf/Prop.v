@@ -549,7 +549,6 @@ Proof.
 (* ####################################################### *)
 (** ** Inverting Evidence *)
 
-
 (** Besides induction, we can use the other tactics in our toolkit
     with evidence.  For example, this proof uses [destruct] on
     evidence. *)

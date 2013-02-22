@@ -38,7 +38,7 @@ Fixpoint ceval_step1 (st : state) (c : com) : state :=
     Coq doesn't accept such a definition ([Error: Cannot guess
     decreasing argument of fix]) because the function we want to
     define is not guaranteed to terminate. Indeed, the changed
-    [ceval_step1] function applied to the [loop] program above would
+    [ceval_step1] function applied to the [loop] program from [Imp.v] would
     never terminate. Since Coq is not just a functional programming
     language, but also a consistent logic, any potentially
     non-terminating function needs to be rejected. Here is an
@@ -52,7 +52,7 @@ Fixpoint ceval_step1 (st : state) (c : com) : state :=
     would be a disaster for Coq's logical consistency.
 
     Thus, because it doesn't terminate on all inputs, the full version
-    of [ceval_step1] cannot be be written in Coq -- at least not
+    of [ceval_step1] cannot be written in Coq -- at least not
     without one additional trick... *)
 
 

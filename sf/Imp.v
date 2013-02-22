@@ -1,6 +1,6 @@
 (** * Imp: Simple Imperative Programs *)
 
-(* $Date: 2012-07-25 16:43:16 -0400 (Wed, 25 Jul 2012) $ *)
+(* $Date: 2012-09-08 20:51:57 -0400 (Sat, 08 Sep 2012) $ *)
 
 (** In this chapter, we begin a new direction that will
     continue for the rest of the course.  Up to now we've been mostly

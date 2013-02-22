@@ -388,7 +388,6 @@ Notation "'[' x ':=' s ']' t" := (subst x s t) (at level 20).
          (if t1 then t2 else t3) ==> (if t1' then t2 else t3)
 *)
 
-
 Reserved Notation "t1 '==>' t2" (at level 40).
 
 Inductive step : tm -> tm -> Prop :=

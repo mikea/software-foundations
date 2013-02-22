@@ -56,7 +56,7 @@
 <div class="code code-tight">
 
 <br/>
-<span class="comment">(*&nbsp;$Date:&nbsp;2012-07-25&nbsp;16:43:16&nbsp;-0400&nbsp;(Wed,&nbsp;25&nbsp;Jul&nbsp;2012)&nbsp;$&nbsp;*)</span><br/>
+<span class="comment">(*&nbsp;$Date:&nbsp;2012-09-08&nbsp;20:51:57&nbsp;-0400&nbsp;(Sat,&nbsp;08&nbsp;Sep&nbsp;2012)&nbsp;$&nbsp;*)</span><br/>
 
 <br/>
 </div>
@@ -86,6 +86,12 @@ In this chapter, we begin a new direction that will
 
 </div>
 
+<div class="paragraph"> </div>
+
+ This chapter looks at how to define the <i>syntax</i> and <i>semantics</i>
+    of Imp; the chapters that follow develop a theory of <i>program
+    equivalence</i> and introduce <i>Hoare Logic</i>, the best-known logic for
+    reasoning about imperative programs. 
 </div>
 <div class="code code-tight">
 
@@ -243,6 +249,11 @@ In this chapter, we'll elide the translation from the
 </li>
 </ul>
 
+<div class="paragraph"> </div>
+
+ It's good to be comfortable with both sorts of notations: informal
+    ones for communicating between humans and formal ones for carrying
+    out implementations and proofs. 
 </div>
 <div class="code code-tight">
 
@@ -583,7 +594,83 @@ Using <span class="inlinecode"><span class="id" type="tactic">try</span></span> 
 </div>
 
 <div class="doc">
-This proof can still be improved: the first case (for <span class="inlinecode"><span class="id" type="var">e</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">ANum</span></span>
+Coq experts often use this "<span class="inlinecode">...;</span> <span class="inlinecode"><span class="id" type="tactic">try</span>...</span> <span class="inlinecode"></span>" idiom after a
+    tactic like <span class="inlinecode"><span class="id" type="tactic">induction</span></span> to take care of many similar cases all at
+    once.  Naturally, this practice has an analog in informal
+    proofs.  Here is an informal proof of this theorem that
+    matches the structure of the formal one:
+
+<div class="paragraph"> </div>
+
+    <i>Theorem</i>: For all arithmetic expressions <span class="inlinecode"><span class="id" type="var">e</span></span>,
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aeval</span>&nbsp;(<span class="id" type="var">optimize_0plus</span>&nbsp;<span class="id" type="var">e</span>)&nbsp;=&nbsp;<span class="id" type="var">aeval</span>&nbsp;<span class="id" type="var">e</span>.
+<div class="paragraph"> </div>
+
+</div>
+    <i>Proof</i>: By induction on <span class="inlinecode"><span class="id" type="var">e</span></span>.  The <span class="inlinecode"><span class="id" type="var">AMinus</span></span> and <span class="inlinecode"><span class="id" type="var">AMult</span></span> cases
+    follow directly from the IH.  The remaining cases are as follows:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Suppose <span class="inlinecode"><span class="id" type="var">e</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">ANum</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> for some <span class="inlinecode"><span class="id" type="var">n</span></span>.  We must show 
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;<span class="id" type="var">aeval</span>&nbsp;(<span class="id" type="var">optimize_0plus</span>&nbsp;(<span class="id" type="var">ANum</span>&nbsp;<span class="id" type="var">n</span>))&nbsp;=&nbsp;<span class="id" type="var">aeval</span>&nbsp;(<span class="id" type="var">ANum</span>&nbsp;<span class="id" type="var">n</span>).
+<div class="paragraph"> </div>
+
+</div>
+        This is immediate from the definition of <span class="inlinecode"><span class="id" type="var">optimize_0plus</span></span>.
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Suppose <span class="inlinecode"><span class="id" type="var">e</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">APlus</span></span> <span class="inlinecode"><span class="id" type="var">e1</span></span> <span class="inlinecode"><span class="id" type="var">e2</span></span> for some <span class="inlinecode"><span class="id" type="var">e1</span></span> and <span class="inlinecode"><span class="id" type="var">e2</span></span>.  We
+        must show
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;<span class="id" type="var">aeval</span>&nbsp;(<span class="id" type="var">optimize_0plus</span>&nbsp;(<span class="id" type="var">APlus</span>&nbsp;<span class="id" type="var">e1</span>&nbsp;<span class="id" type="var">e2</span>))&nbsp;<br/>
+=&nbsp;<span class="id" type="var">aeval</span>&nbsp;(<span class="id" type="var">APlus</span>&nbsp;<span class="id" type="var">e1</span>&nbsp;<span class="id" type="var">e2</span>).
+<div class="paragraph"> </div>
+
+</div>
+        Consider the possible forms of <span class="inlinecode"><span class="id" type="var">e1</span></span>.  For most of them,
+        <span class="inlinecode"><span class="id" type="var">optimize_0plus</span></span> simply calls itself recursively for the
+        subexpressions and rebuilds a new expression of the same form
+        as <span class="inlinecode"><span class="id" type="var">e1</span></span>; in these cases, the result follows directly from the
+        IH.
+
+<div class="paragraph"> </div>
+
+        The interesting case is when <span class="inlinecode"><span class="id" type="var">e1</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">ANum</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> for some <span class="inlinecode"><span class="id" type="var">n</span></span>.
+        If <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">ANum</span></span> <span class="inlinecode">0</span>, then
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;<span class="id" type="var">optimize_0plus</span>&nbsp;(<span class="id" type="var">APlus</span>&nbsp;<span class="id" type="var">e1</span>&nbsp;<span class="id" type="var">e2</span>)&nbsp;=&nbsp;<span class="id" type="var">optimize_0plus</span>&nbsp;<span class="id" type="var">e2</span>
+<div class="paragraph"> </div>
+
+</div>
+        and the IH for <span class="inlinecode"><span class="id" type="var">e2</span></span> is exactly what we need.  On the other
+        hand, if <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n'</span></span> for some <span class="inlinecode"><span class="id" type="var">n'</span></span>, then again <span class="inlinecode"><span class="id" type="var">optimize_0plus</span></span>
+        simply calls itself recursively, and the result follows from
+        the IH.  <font size=-2>&#9744;</font> 
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+ This proof can still be improved: the first case (for <span class="inlinecode"><span class="id" type="var">e</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">ANum</span></span>
     <span class="inlinecode"><span class="id" type="var">n</span></span>) is very trivial &mdash; even more trivial than the cases that we
     said simply followed from the IH &mdash; yet we have chosen to write it
     out in full.  It would be better and clearer to drop it and just
@@ -976,8 +1063,74 @@ Andrew Appel calls this the "Santa Claus tactic."  We'll see
 <div class="doc">
 <a name="lab288"></a><h1 class="section">Evaluation as a Relation</h1>
 
+<div class="paragraph"> </div>
+
+ We have presented <span class="inlinecode"><span class="id" type="var">aeval</span></span> and <span class="inlinecode"><span class="id" type="var">beval</span></span> as functions defined by
+    <span class="inlinecode"><span class="id" type="var">Fixpoints</span></span>.  Another way to think about evaluation, one that we
+    will see is often more flexible, is as a <i>relation</i> between
+    expressions and their values.  This leads naturally to <span class="inlinecode"><span class="id" type="keyword">Inductive</span></span>
+    definitions like the following one for arithmetic
+    expressions... 
 </div>
-<div class="code code-space">
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Module</span> <span class="id" type="var">aevalR_first_try</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">aevalR</span> : <span class="id" type="var">aexp</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">nat</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">E_ANum</span>  : <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">n</span>: <span class="id" type="var">nat</span>), <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span> (<span class="id" type="var">ANum</span> <span class="id" type="var">n</span>) <span class="id" type="var">n</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">E_APlus</span> : <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">e1</span> <span class="id" type="var">e2</span>: <span class="id" type="var">aexp</span>) (<span class="id" type="var">n1</span> <span class="id" type="var">n2</span>: <span class="id" type="var">nat</span>), <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span> <span class="id" type="var">e1</span> <span class="id" type="var">n1</span> <span style="font-family: arial;">&rarr;</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span> <span class="id" type="var">e2</span> <span class="id" type="var">n2</span> <span style="font-family: arial;">&rarr;</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span> (<span class="id" type="var">APlus</span> <span class="id" type="var">e1</span> <span class="id" type="var">e2</span>) (<span class="id" type="var">n1</span> + <span class="id" type="var">n2</span>)<br/>
+&nbsp;&nbsp;| <span class="id" type="var">E_AMinus</span>: <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">e1</span> <span class="id" type="var">e2</span>: <span class="id" type="var">aexp</span>) (<span class="id" type="var">n1</span> <span class="id" type="var">n2</span>: <span class="id" type="var">nat</span>), <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span> <span class="id" type="var">e1</span> <span class="id" type="var">n1</span> <span style="font-family: arial;">&rarr;</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span> <span class="id" type="var">e2</span> <span class="id" type="var">n2</span> <span style="font-family: arial;">&rarr;</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span> (<span class="id" type="var">AMinus</span> <span class="id" type="var">e1</span> <span class="id" type="var">e2</span>) (<span class="id" type="var">n1</span> - <span class="id" type="var">n2</span>)<br/>
+&nbsp;&nbsp;| <span class="id" type="var">E_AMult</span> : <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">e1</span> <span class="id" type="var">e2</span>: <span class="id" type="var">aexp</span>) (<span class="id" type="var">n1</span> <span class="id" type="var">n2</span>: <span class="id" type="var">nat</span>), <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span> <span class="id" type="var">e1</span> <span class="id" type="var">n1</span> <span style="font-family: arial;">&rarr;</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span> <span class="id" type="var">e2</span> <span class="id" type="var">n2</span> <span style="font-family: arial;">&rarr;</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span> (<span class="id" type="var">AMult</span> <span class="id" type="var">e1</span> <span class="id" type="var">e2</span>) (<span class="id" type="var">n1</span> * <span class="id" type="var">n2</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As is often the case with relations, we'll find it
+    convenient to define infix notation for <span class="inlinecode"><span class="id" type="var">aevalR</span></span>.  We'll write <span class="inlinecode"><span class="id" type="var">e</span></span>
+    <span class="inlinecode"><span style="font-family: arial;">&dArr;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> to mean that arithmetic expression <span class="inlinecode"><span class="id" type="var">e</span></span> evaluates to value
+    <span class="inlinecode"><span class="id" type="var">n</span></span>.  (This notation is one place where the limitation to ASCII
+    symbols becomes a little bothersome.  The standard notation for
+    the evaluation relation is a double down-arrow.  We'll typeset it
+    like this in the HTML version of the notes and use a double
+    vertical bar as the closest approximation in <span class="inlinecode">.<span class="id" type="var">v</span></span> files.)  
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Notation</span> "e '<span style="font-family: arial;">&dArr;</span>' n" := (<span class="id" type="var">aevalR</span> <span class="id" type="var">e</span> <span class="id" type="var">n</span>) : <span class="id" type="var">type_scope</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">End</span> <span class="id" type="var">aevalR_first_try</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+In fact, Coq provides a way to use this notation in the definition
+    of <span class="inlinecode"><span class="id" type="var">aevalR</span></span> itself.  This avoids situations where we're working on
+    a proof involving statements in the form <span class="inlinecode"><span class="id" type="var">e</span></span> <span class="inlinecode"><span style="font-family: arial;">&dArr;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> but we have to
+    refer back to a definition written using the form <span class="inlinecode"><span class="id" type="var">aevalR</span></span> <span class="inlinecode"><span class="id" type="var">e</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span>.
+
+<div class="paragraph"> </div>
+
+    We do this by first "reserving" the notation, then giving the
+    definition together with a declaration of what the notation
+    means. 
+</div>
+<div class="code code-tight">
 
 <br/>
 <span class="id" type="keyword">Reserved Notation</span> "e '<span style="font-family: arial;">&dArr;</span>' n" (<span class="id" type="tactic">at</span> <span class="id" type="var">level</span> 50, <span class="id" type="var">left</span> <span class="id" type="var">associativity</span>).<br/>
@@ -1000,6 +1153,16 @@ Andrew Appel calls this the "Santa Claus tactic."  We'll see
 &nbsp;&nbsp;<span class="id" type="var">first</span>;<br/>
 &nbsp;&nbsp;[ <span class="id" type="var">Case_aux</span> <span class="id" type="var">c</span> "E_ANum" | <span class="id" type="var">Case_aux</span> <span class="id" type="var">c</span> "E_APlus"<br/>
 &nbsp;&nbsp;| <span class="id" type="var">Case_aux</span> <span class="id" type="var">c</span> "E_AMinus" | <span class="id" type="var">Case_aux</span> <span class="id" type="var">c</span> "E_AMult" ].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+It is straightforward to prove that the relational and functional
+    definitions of evaluation agree on all possible arithmetic
+    expressions... 
+</div>
+<div class="code code-tight">
 
 <br/>
 <span class="id" type="keyword">Theorem</span> <span class="id" type="var">aeval_iff_aevalR</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">a</span> <span class="id" type="var">n</span>,<br/>
@@ -1036,6 +1199,31 @@ Andrew Appel calls this the "Santa Claus tactic."  We'll see
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">IHa1</span>. <span class="id" type="tactic">reflexivity</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">IHa2</span>. <span class="id" type="tactic">reflexivity</span>.<br/>
 <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We can make the proof quite a bit shorter by making more
+    aggressive use of tacticals... 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">aeval_iff_aevalR'</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">a</span> <span class="id" type="var">n</span>,<br/>
+&nbsp;&nbsp;(<span class="id" type="var">a</span> <span style="font-family: arial;">&dArr;</span> <span class="id" type="var">n</span>) <span style="font-family: arial;">&harr;</span> <span class="id" type="var">aeval</span> <span class="id" type="var">a</span> = <span class="id" type="var">n</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;WORKED&nbsp;IN&nbsp;CLASS&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">split</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "<span style="font-family: arial;">&rarr;</span>".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">H</span>; <span class="id" type="tactic">induction</span> <span class="id" type="var">H</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "<span style="font-family: arial;">&larr;</span>".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">generalize</span> <span class="id" type="tactic">dependent</span> <span class="id" type="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">induction</span> <span class="id" type="var">a</span>; <span class="id" type="tactic">simpl</span>; <span class="id" type="tactic">intros</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="var">constructor</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">try</span> <span class="id" type="tactic">apply</span> <span class="id" type="var">IHa1</span>; <span class="id" type="tactic">try</span> <span class="id" type="tactic">apply</span> <span class="id" type="var">IHa2</span>; <span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
 </div>
 
 <div class="doc">
@@ -1054,6 +1242,23 @@ Inductive&nbsp;bevalR:<br/>
 
 <div class="doc">
 <font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+ For the definitions of evaluation for arithmetic and boolean
+    expressions, the choice of whether to use functional or relational
+    definitions is mainly a matter of taste.  In general, Coq has
+    somewhat better support for working with relations.  On the other
+    hand, in some sense function definitions carry more information,
+    because functions are necessarily deterministic and defined on all
+    arguments; for a relation we have to show these properties
+    explicitly if we need them. Functions also take advantage of Coq's
+    computational mechanism.
+
+<div class="paragraph"> </div>
+
+    However, there are circumstances where relational definitions of
+    evaluation are greatly preferable to functional ones, as we'll see
+    shortly. 
 </div>
 <div class="code code-tight">
 
@@ -1061,10 +1266,144 @@ Inductive&nbsp;bevalR:<br/>
 </div>
 
 <div class="doc">
-<a name="lab291"></a><h1 class="section">Expressions With Variables</h1>
+<a name="lab290"></a><h2 class="section">Inference Rule Notation</h2>
+
+<div class="paragraph"> </div>
+
+ In informal discussions, it is convenient write the rules for
+    <span class="inlinecode"><span class="id" type="var">aevalR</span></span> and similar relations in the more readable "graphical"
+    form of <i>inference rules</i>, where the premises above the line
+    justify the conclusion below the line.  For example, the
+    constructor <span class="inlinecode"><span class="id" type="var">E_APlus</span></span>...
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<span class="id" type="var">E_APlus</span>&nbsp;:&nbsp;<span style="font-family: arial;">&forall;</span>&nbsp;(<span class="id" type="var">e1</span>&nbsp;<span class="id" type="var">e2</span>:&nbsp;<span class="id" type="var">aexp</span>)&nbsp;(<span class="id" type="var">n1</span>&nbsp;<span class="id" type="var">n2</span>:&nbsp;<span class="id" type="var">nat</span>),&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span>&nbsp;<span class="id" type="var">e1</span>&nbsp;<span class="id" type="var">n1</span>&nbsp;<span style="font-family: arial;">&rarr;</span>&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span>&nbsp;<span class="id" type="var">e2</span>&nbsp;<span class="id" type="var">n2</span>&nbsp;<span style="font-family: arial;">&rarr;</span>&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">aevalR</span>&nbsp;(<span class="id" type="var">APlus</span>&nbsp;<span class="id" type="var">e1</span>&nbsp;<span class="id" type="var">e2</span>)&nbsp;(<span class="id" type="var">n1</span>&nbsp;+&nbsp;<span class="id" type="var">n2</span>)
+<div class="paragraph"> </div>
 
 </div>
-<div class="code code-space">
+    ...would be written like this as an inference rule:
+<center><table class="infrule">
+<tr class="infruleassumption">
+  <td class="infrule">e1&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n1</td>
+  <td></td>
+</td>
+<tr class="infruleassumption">
+  <td class="infrule">e2&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n2</td>
+  <td class="infrulenamecol" rowspan="3">
+    (E_APlus) &nbsp;
+  </td></tr>
+<tr class="infrulemiddle">
+  <td class="infrule"><hr /></td>
+</tr>
+<tr class="infruleassumption">
+  <td class="infrule">APlus&nbsp;e1&nbsp;e2&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n1+n2</td>
+  <td></td>
+</td>
+</table></center>    Formally, there is nothing very deep about inference rules: they
+    are just implications.  You can read the rule name on the right as
+    the name of the constructor and read each of the linebreaks
+    between the premises above the line and the line itself as <span class="inlinecode"><span style="font-family: arial;">&rarr;</span></span>.
+    All the variables mentioned in the rule (<span class="inlinecode"><span class="id" type="var">e1</span></span>, <span class="inlinecode"><span class="id" type="var">n1</span></span>, etc.) are
+    implicitly bound by universal quantifiers at the beginning.  The
+    whole collection of rules is understood as being wrapped in an
+    <span class="inlinecode"><span class="id" type="keyword">Inductive</span></span> declaration (informally, this is either elided or else
+    indicated by saying something like "Let <span class="inlinecode"><span class="id" type="var">aevalR</span></span> be the smallest
+    relation closed under the following rules...").
+
+<div class="paragraph"> </div>
+
+    For example, <span class="inlinecode"><span style="font-family: arial;">&dArr;</span></span> is the smallest relation closed under these
+    rules:
+<center><table class="infrule">
+<tr class="infruleassumption">
+  <td class="infrule">&nbsp;&nbsp;</td>
+  <td class="infrulenamecol" rowspan="3">
+    (E_ANum) &nbsp;
+  </td></tr>
+<tr class="infrulemiddle">
+  <td class="infrule"><hr /></td>
+</tr>
+<tr class="infruleassumption">
+  <td class="infrule">ANum&nbsp;n&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n</td>
+  <td></td>
+</td>
+</table></center><center><table class="infrule">
+<tr class="infruleassumption">
+  <td class="infrule">e1&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n1</td>
+  <td></td>
+</td>
+<tr class="infruleassumption">
+  <td class="infrule">e2&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n2</td>
+  <td class="infrulenamecol" rowspan="3">
+    (E_APlus) &nbsp;
+  </td></tr>
+<tr class="infrulemiddle">
+  <td class="infrule"><hr /></td>
+</tr>
+<tr class="infruleassumption">
+  <td class="infrule">APlus&nbsp;e1&nbsp;e2&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n1+n2</td>
+  <td></td>
+</td>
+</table></center><center><table class="infrule">
+<tr class="infruleassumption">
+  <td class="infrule">e1&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n1</td>
+  <td></td>
+</td>
+<tr class="infruleassumption">
+  <td class="infrule">e2&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n2</td>
+  <td class="infrulenamecol" rowspan="3">
+    (E_AMinus) &nbsp;
+  </td></tr>
+<tr class="infrulemiddle">
+  <td class="infrule"><hr /></td>
+</tr>
+<tr class="infruleassumption">
+  <td class="infrule">AMinus&nbsp;e1&nbsp;e2&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n1-n2</td>
+  <td></td>
+</td>
+</table></center><center><table class="infrule">
+<tr class="infruleassumption">
+  <td class="infrule">e1&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n1</td>
+  <td></td>
+</td>
+<tr class="infruleassumption">
+  <td class="infrule">e2&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n2</td>
+  <td class="infrulenamecol" rowspan="3">
+    (E_AMult) &nbsp;
+  </td></tr>
+<tr class="infrulemiddle">
+  <td class="infrule"><hr /></td>
+</tr>
+<tr class="infruleassumption">
+  <td class="infrule">AMult&nbsp;e1&nbsp;e2&nbsp;<span style="font-family: arial;">&dArr;</span>&nbsp;n1*n2</td>
+  <td></td>
+</td>
+</table></center>
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">End</span> <span class="id" type="var">AExp</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab291"></a><h1 class="section">Expressions With Variables</h1>
+
+<div class="paragraph"> </div>
+
+ Let's turn our attention back to defining Imp.  The next thing we
+    need to do is to enrich our arithmetic and boolean expressions
+    with variables.  To keep things simple, we'll assume that all
+    variables are global and that they only hold numbers. 
+</div>
+<div class="code code-tight">
 
 <br/>
 </div>
@@ -1072,8 +1411,23 @@ Inductive&nbsp;bevalR:<br/>
 <div class="doc">
 <a name="lab292"></a><h2 class="section">Identifiers</h2>
 
+<div class="paragraph"> </div>
+
+ To begin, we'll need to formalize <i>identifiers</i> such as program
+    variables.  We could use strings for this &mdash; or, in a real
+    compiler, fancier structures like pointers into a symbol table.
+    But for simplicity let's just use natural numbers as identifiers.
+
+<div class="paragraph"> </div>
+
+    (We hide this section in a module because these definitions are
+    actually in <span class="inlinecode"><span class="id" type="var">SfLib</span></span>, but we want to repeat them here so that we
+    can explain them.) 
 </div>
-<div class="code code-space">
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Module</span> <span class="id" type="var">Id</span>.<br/>
 
 <br/>
 </div>
@@ -1093,6 +1447,93 @@ We define a new inductive datatype <span class="inlinecode"><span class="id" typ
 &nbsp;&nbsp;<span class="id" type="keyword">match</span> (<span class="id" type="var">X1</span>, <span class="id" type="var">X2</span>) <span class="id" type="keyword">with</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">Id</span> <span class="id" type="var">n1</span>, <span class="id" type="var">Id</span> <span class="id" type="var">n2</span>) =&gt; <span class="id" type="var">beq_nat</span> <span class="id" type="var">n1</span> <span class="id" type="var">n2</span><br/>
 &nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+After we "wrap" numbers as identifiers in this way, it is
+    convenient to recapitulate a few properties of numbers as
+    analogous properties of identifiers, so that we can work with
+    identifiers in definitions and proofs abstractly, without
+    unwrapping them to expose the underlying numbers.  Since all we
+    need to know about identifiers is whether they are the same or
+    different, just a few basic facts are all we need. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">beq_id_refl</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">X</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">true</span> = <span class="id" type="var">beq_id</span> <span class="id" type="var">X</span> <span class="id" type="var">X</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span>. <span class="id" type="tactic">destruct</span> <span class="id" type="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">beq_nat_refl</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab293"></a><h4 class="section">Exercise: 1 star, optional (beq_id_eq)</h4>
+ For this and the following exercises, do not use induction, but
+    rather apply similar results already proved for natural numbers.
+    Some of the tactics mentioned above may prove useful. 
+</div>
+<div class="code code-tight">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">beq_id_eq</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">i1</span> <span class="id" type="var">i2</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">true</span> = <span class="id" type="var">beq_id</span> <span class="id" type="var">i1</span> <span class="id" type="var">i2</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">i1</span> = <span class="id" type="var">i2</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab294"></a><h4 class="section">Exercise: 1 star, optional (beq_id_false_not_eq)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">beq_id_false_not_eq</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">i1</span> <span class="id" type="var">i2</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">beq_id</span> <span class="id" type="var">i1</span> <span class="id" type="var">i2</span> = <span class="id" type="var">false</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">i1</span> &lt;&gt; <span class="id" type="var">i2</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab295"></a><h4 class="section">Exercise: 1 star, optional (not_eq_beq_id_false)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">not_eq_beq_id_false</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">i1</span> <span class="id" type="var">i2</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">i1</span> &lt;&gt; <span class="id" type="var">i2</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">beq_id</span> <span class="id" type="var">i1</span> <span class="id" type="var">i2</span> = <span class="id" type="var">false</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab296"></a><h4 class="section">Exercise: 1 star, optional (beq_id_sym)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">beq_id_sym</span>: <span style="font-family: arial;">&forall;</span><span class="id" type="var">i1</span> <span class="id" type="var">i2</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">beq_id</span> <span class="id" type="var">i1</span> <span class="id" type="var">i2</span> = <span class="id" type="var">beq_id</span> <span class="id" type="var">i2</span> <span class="id" type="var">i1</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">End</span> <span class="id" type="var">Id</span>.<br/>
 
 <br/>
 </div>
@@ -1357,8 +1798,44 @@ Defining a few variable names as notational shorthands will make
 <div class="doc">
 <a name="lab307"></a><h2 class="section">Syntax</h2>
 
+<div class="paragraph"> </div>
+
+ Informally, commands are described by the following BNF
+    grammar: 
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">com</span>&nbsp;::=&nbsp;'<span class="id" type="var">SKIP'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<span class="id" type="var">X</span>&nbsp;'::='&nbsp;<span class="id" type="var">aexp</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<span class="id" type="var">com</span>&nbsp;';'&nbsp;<span class="id" type="var">com</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;'<span class="id" type="var">WHILE'</span>&nbsp;<span class="id" type="var">bexp</span>&nbsp;'<span class="id" type="var">DO'</span>&nbsp;<span class="id" type="var">com</span>&nbsp;'<span class="id" type="var">END'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;'<span class="id" type="var">IFB'</span>&nbsp;<span class="id" type="var">bexp</span>&nbsp;'<span class="id" type="var">THEN'</span>&nbsp;<span class="id" type="var">com</span>&nbsp;'<span class="id" type="var">ELSE'</span>&nbsp;<span class="id" type="var">com</span>&nbsp;'<span class="id" type="var">FI'</span>
+<div class="paragraph"> </div>
+
 </div>
-<div class="code code-space">
+    For example, here's the factorial function in Imp. 
+
+<div class="paragraph"> </div>
+
+<div class="code code-tight">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Z</span>&nbsp;::=&nbsp;<span class="id" type="var">X</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Y</span>&nbsp;::=&nbsp;1;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">WHILE</span>&nbsp;<span class="id" type="var">not</span>&nbsp;(<span class="id" type="var">Z</span>&nbsp;=&nbsp;0)&nbsp;<span class="id" type="var">DO</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Y</span>&nbsp;::=&nbsp;<span class="id" type="var">Y</span>&nbsp;*&nbsp;<span class="id" type="var">Z</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Z</span>&nbsp;::=&nbsp;<span class="id" type="var">Z</span>&nbsp;-&nbsp;1<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">END</span>
+<div class="paragraph"> </div>
+
+</div>
+   When this command terminates, the variable <span class="inlinecode"><span class="id" type="var">Y</span></span> will contain the
+   factorial of the initial value of <span class="inlinecode"><span class="id" type="var">X</span></span>.
+
+<div class="paragraph"> </div>
+
+ Here is the formal definition of the syntax of commands: 
+</div>
+<div class="code code-tight">
 
 <br/>
 <span class="id" type="keyword">Inductive</span> <span class="id" type="var">com</span> : <span class="id" type="keyword">Type</span> :=<br/>
@@ -1417,6 +1894,92 @@ For example, here is the factorial function again, written as a
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Y</span> ::= <span class="id" type="var">AMult</span> (<span class="id" type="var">AId</span> <span class="id" type="var">Y</span>) (<span class="id" type="var">AId</span> <span class="id" type="var">Z</span>);<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">Z</span> ::= <span class="id" type="var">AMinus</span> (<span class="id" type="var">AId</span> <span class="id" type="var">Z</span>) (<span class="id" type="var">ANum</span> 1)<br/>
 &nbsp;&nbsp;<span class="id" type="var">END</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab308"></a><h2 class="section">Examples</h2>
+
+<div class="paragraph"> </div>
+
+ Assignment: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">plus2</span> : <span class="id" type="var">com</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">X</span> ::= (<span class="id" type="var">APlus</span> (<span class="id" type="var">AId</span> <span class="id" type="var">X</span>) (<span class="id" type="var">ANum</span> 2)).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">XtimesYinZ</span> : <span class="id" type="var">com</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">Z</span> ::= (<span class="id" type="var">AMult</span> (<span class="id" type="var">AId</span> <span class="id" type="var">X</span>) (<span class="id" type="var">AId</span> <span class="id" type="var">Y</span>)).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">subtract_slowly_body</span> : <span class="id" type="var">com</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">Z</span> ::= <span class="id" type="var">AMinus</span> (<span class="id" type="var">AId</span> <span class="id" type="var">Z</span>) (<span class="id" type="var">ANum</span> 1) ;<br/>
+&nbsp;&nbsp;<span class="id" type="var">X</span> ::= <span class="id" type="var">AMinus</span> (<span class="id" type="var">AId</span> <span class="id" type="var">X</span>) (<span class="id" type="var">ANum</span> 1).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Loops: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">subtract_slowly</span> : <span class="id" type="var">com</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">WHILE</span> <span class="id" type="var">BNot</span> (<span class="id" type="var">BEq</span> (<span class="id" type="var">AId</span> <span class="id" type="var">X</span>) (<span class="id" type="var">ANum</span> 0)) <span class="id" type="var">DO</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">subtract_slowly_body</span><br/>
+&nbsp;&nbsp;<span class="id" type="var">END</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">subtract_3_from_5_slowly</span> : <span class="id" type="var">com</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">X</span> ::= <span class="id" type="var">ANum</span> 3 ;<br/>
+&nbsp;&nbsp;<span class="id" type="var">Z</span> ::= <span class="id" type="var">ANum</span> 5 ;<br/>
+&nbsp;&nbsp;<span class="id" type="var">subtract_slowly</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+An infinite loop: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">loop</span> : <span class="id" type="var">com</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">WHILE</span> <span class="id" type="var">BTrue</span> <span class="id" type="var">DO</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SKIP</span><br/>
+&nbsp;&nbsp;<span class="id" type="var">END</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Factorial again (broken up into smaller pieces this time, for
+    convenience when we come back to proving things about it
+    later).  
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">fact_body</span> : <span class="id" type="var">com</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">Y</span> ::= <span class="id" type="var">AMult</span> (<span class="id" type="var">AId</span> <span class="id" type="var">Y</span>) (<span class="id" type="var">AId</span> <span class="id" type="var">Z</span>) ;<br/>
+&nbsp;&nbsp;<span class="id" type="var">Z</span> ::= <span class="id" type="var">AMinus</span> (<span class="id" type="var">AId</span> <span class="id" type="var">Z</span>) (<span class="id" type="var">ANum</span> 1).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">fact_loop</span> : <span class="id" type="var">com</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">WHILE</span> <span class="id" type="var">BNot</span> (<span class="id" type="var">BEq</span> (<span class="id" type="var">AId</span> <span class="id" type="var">Z</span>) (<span class="id" type="var">ANum</span> 0)) <span class="id" type="var">DO</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">fact_body</span><br/>
+&nbsp;&nbsp;<span class="id" type="var">END</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">fact_com</span> : <span class="id" type="var">com</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">Z</span> ::= <span class="id" type="var">AId</span> <span class="id" type="var">X</span> ;<br/>
+&nbsp;&nbsp;<span class="id" type="var">Y</span> ::= <span class="id" type="var">ANum</span> 1 ;<br/>
+&nbsp;&nbsp;<span class="id" type="var">fact_loop</span>.<br/>
 
 <br/>
 </div>
@@ -1515,14 +2078,17 @@ Fixpoint ceval_fun (st : state) (c : com) : state :=
  Here's a better way: we define <span class="inlinecode"><span class="id" type="var">ceval</span></span> as a <i>relation</i> rather than
     a <i>function</i> &mdash; i.e., we define it in <span class="inlinecode"><span class="id" type="keyword">Prop</span></span> instead of <span class="inlinecode"><span class="id" type="keyword">Type</span></span>, as
     we did for <span class="inlinecode"><span class="id" type="var">aevalR</span></span> and <span class="inlinecode"><span class="id" type="var">bevalR</span></span> above. 
-</div>
-<div class="code code-tight">
+<div class="paragraph"> </div>
 
-<br/>
-</div>
+ This is an important change.  Besides freeing us from the
+    hacks that would be needed to define an evaluation function, it
+    gives us a lot more flexibility in the definition.  For example,
+    if we added concurrency features to the language, we'd want the
+    definition of evaluation to be non-deterministic &mdash; i.e., not only
+    would it not be total, it would not even be a partial function! 
+<div class="paragraph"> </div>
 
-<div class="doc">
-We'll use the notation <span class="inlinecode"><span class="id" type="var">c</span></span> <span class="inlinecode">/</span> <span class="inlinecode"><span class="id" type="var">st</span></span> <span class="inlinecode"><span style="font-family: arial;">&dArr;</span></span> <span class="inlinecode"><span class="id" type="var">st'</span></span> for our <span class="inlinecode"><span class="id" type="var">ceval</span></span> relation,
+ We'll use the notation <span class="inlinecode"><span class="id" type="var">c</span></span> <span class="inlinecode">/</span> <span class="inlinecode"><span class="id" type="var">st</span></span> <span class="inlinecode"><span style="font-family: arial;">&dArr;</span></span> <span class="inlinecode"><span class="id" type="var">st'</span></span> for our <span class="inlinecode"><span class="id" type="var">ceval</span></span> relation,
     that is <span class="inlinecode"><span class="id" type="var">c</span></span> <span class="inlinecode">/</span> <span class="inlinecode"><span class="id" type="var">st</span></span> <span class="inlinecode"><span style="font-family: arial;">&dArr;</span></span> <span class="inlinecode"><span class="id" type="var">st'</span></span> means that executing program <span class="inlinecode"><span class="id" type="var">c</span></span> in a
     starting state <span class="inlinecode"><span class="id" type="var">st</span></span> results in an ending state <span class="inlinecode"><span class="id" type="var">st'</span></span>.  This can be
     pronounced "<span class="inlinecode"><span class="id" type="var">c</span></span> takes state <span class="inlinecode"><span class="id" type="var">st</span></span> to <span class="inlinecode"><span class="id" type="var">st'</span></span>". 
@@ -1689,6 +2255,36 @@ We'll use the notation <span class="inlinecode"><span class="id" type="var">c</s
 </div>
 
 <div class="doc">
+The cost of defining evaluation as a relation instead of a
+    function is that we now need to construct <i>proofs</i> that some
+    program evaluates to some result state, rather than just letting
+    Coq's computation mechanism do it for us. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Example</span> <span class="id" type="var">ceval_example1</span>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">X</span> ::= <span class="id" type="var">ANum</span> 2; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">IFB</span> <span class="id" type="var">BLe</span> (<span class="id" type="var">AId</span> <span class="id" type="var">X</span>) (<span class="id" type="var">ANum</span> 1) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">THEN</span> <span class="id" type="var">Y</span> ::= <span class="id" type="var">ANum</span> 3 <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">ELSE</span> <span class="id" type="var">Z</span> ::= <span class="id" type="var">ANum</span> 4 <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">FI</span>) <br/>
+&nbsp;&nbsp;&nbsp;/ <span class="id" type="var">empty_state</span> <br/>
+&nbsp;&nbsp;&nbsp;<span style="font-family: arial;">&dArr;</span> (<span class="id" type="var">update</span> (<span class="id" type="var">update</span> <span class="id" type="var">empty_state</span> <span class="id" type="var">X</span> 2) <span class="id" type="var">Z</span> 4).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;We&nbsp;must&nbsp;supply&nbsp;the&nbsp;intermediate&nbsp;state&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">E_Seq</span> <span class="id" type="keyword">with</span> (<span class="id" type="var">update</span> <span class="id" type="var">empty_state</span> <span class="id" type="var">X</span> 2).<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "assignment command".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">E_Ass</span>. <span class="id" type="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "if command".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">E_IfFalse</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">E_Ass</span>. <span class="id" type="tactic">reflexivity</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
 <a name="lab312"></a><h4 class="section">Exercise: 2 stars (ceval_example2)</h4>
 
 </div>
@@ -1731,6 +2327,579 @@ We'll use the notation <span class="inlinecode"><span class="id" type="var">c</s
 <div class="code code-tight">
 
 <br/>
+</div>
+
+<div class="doc">
+<a name="lab314"></a><h2 class="section">Determinism of Evaluation</h2>
+
+<div class="paragraph"> </div>
+
+ Changing from a computational to a relational definition of
+    evaluation is a good move because it allows us to escape from the
+    artificial requirement (imposed by Coq's restrictions on
+    <span class="inlinecode"><span class="id" type="keyword">Fixpoint</span></span> definitions) that evaluation should be a total
+    function.  But it also raises a question: Is the second definition
+    of evaluation actually a partial function?  That is, is it
+    possible that, beginning from the same state <span class="inlinecode"><span class="id" type="var">st</span></span>, we could
+    evaluate some command <span class="inlinecode"><span class="id" type="var">c</span></span> in different ways to reach two different
+    output states <span class="inlinecode"><span class="id" type="var">st'</span></span> and <span class="inlinecode"><span class="id" type="var">st''</span></span>?
+
+<div class="paragraph"> </div>
+
+    In fact, this cannot happen: <span class="inlinecode"><span class="id" type="var">ceval</span></span> is a partial function.
+    Here's the proof: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">ceval_deterministic</span>: <span style="font-family: arial;">&forall;</span><span class="id" type="var">c</span> <span class="id" type="var">st</span> <span class="id" type="var">st1</span> <span class="id" type="var">st2</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">c</span> / <span class="id" type="var">st</span> <span style="font-family: arial;">&dArr;</span> <span class="id" type="var">st1</span>  <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">c</span> / <span class="id" type="var">st</span> <span style="font-family: arial;">&dArr;</span> <span class="id" type="var">st2</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">st1</span> = <span class="id" type="var">st2</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">c</span> <span class="id" type="var">st</span> <span class="id" type="var">st1</span> <span class="id" type="var">st2</span> <span class="id" type="var">E1</span> <span class="id" type="var">E2</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">generalize</span> <span class="id" type="tactic">dependent</span> <span class="id" type="var">st2</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">ceval_cases</span> (<span class="id" type="tactic">induction</span> <span class="id" type="var">E1</span>) <span class="id" type="var">Case</span>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">st2</span> <span class="id" type="var">E2</span>; <span class="id" type="tactic">inversion</span> <span class="id" type="var">E2</span>; <span class="id" type="tactic">subst</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_Skip". <span class="id" type="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_Ass". <span class="id" type="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_Seq".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">assert</span> (<span class="id" type="var">st'</span> = <span class="id" type="var">st'0</span>) <span class="id" type="keyword">as</span> <span class="id" type="var">EQ1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "Proof of assertion". <span class="id" type="tactic">apply</span> <span class="id" type="var">IHE1_1</span>; <span class="id" type="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">subst</span> <span class="id" type="var">st'0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">IHE1_2</span>. <span class="id" type="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_IfTrue".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "b1 evaluates to true".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">IHE1</span>. <span class="id" type="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "b1 evaluates to false (contradiction)".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <span class="id" type="var">H</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H5</span>. <span class="id" type="tactic">inversion</span> <span class="id" type="var">H5</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_IfFalse".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "b1 evaluates to true (contradiction)".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <span class="id" type="var">H</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H5</span>. <span class="id" type="tactic">inversion</span> <span class="id" type="var">H5</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "b1 evaluates to false".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">IHE1</span>. <span class="id" type="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_WhileEnd".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "b1 evaluates to true".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "b1 evaluates to false (contradiction)".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <span class="id" type="var">H</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H2</span>. <span class="id" type="tactic">inversion</span> <span class="id" type="var">H2</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_WhileLoop".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "b1 evaluates to true (contradiction)".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <span class="id" type="var">H</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H4</span>. <span class="id" type="tactic">inversion</span> <span class="id" type="var">H4</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SCase</span> "b1 evaluates to false".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">assert</span> (<span class="id" type="var">st'</span> = <span class="id" type="var">st'0</span>) <span class="id" type="keyword">as</span> <span class="id" type="var">EQ1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">SSCase</span> "Proof of assertion". <span class="id" type="tactic">apply</span> <span class="id" type="var">IHE1_1</span>; <span class="id" type="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">subst</span> <span class="id" type="var">st'0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">IHE1_2</span>. <span class="id" type="tactic">assumption</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab315"></a><h1 class="section">Reasoning About Programs</h1>
+
+<div class="paragraph"> </div>
+
+ We'll get much deeper into systematic techniques for reasoning
+    about Imp programs in the following chapters, but we can do quite
+    a bit just working with the bare definitions.  This section
+    explores some examples. 
+<div class="paragraph"> </div>
+
+<a name="lab316"></a><h2 class="section">Basic Examples</h2>
+
+</div>
+<div class="code code-space">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">plus2_spec</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">st</span> <span class="id" type="var">n</span> <span class="id" type="var">st'</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">st</span> <span class="id" type="var">X</span> = <span class="id" type="var">n</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;<span class="id" type="var">plus2</span> / <span class="id" type="var">st</span> <span style="font-family: arial;">&dArr;</span> <span class="id" type="var">st'</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;<span class="id" type="var">st'</span> <span class="id" type="var">X</span> = <span class="id" type="var">n</span> + 2.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">st</span> <span class="id" type="var">n</span> <span class="id" type="var">st'</span> <span class="id" type="var">HX</span> <span class="id" type="var">Heval</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;Inverting&nbsp;Heval&nbsp;essentially&nbsp;forces&nbsp;Coq&nbsp;to&nbsp;expand&nbsp;one&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;step&nbsp;of&nbsp;the&nbsp;ceval&nbsp;computation&nbsp;-&nbsp;in&nbsp;this&nbsp;case&nbsp;revealing&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;st'&nbsp;must&nbsp;be&nbsp;st&nbsp;extended&nbsp;with&nbsp;the&nbsp;new&nbsp;value&nbsp;of&nbsp;X,&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;since&nbsp;plus2&nbsp;is&nbsp;an&nbsp;assignment&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">Heval</span>. <span class="id" type="tactic">subst</span>. <span class="id" type="tactic">clear</span> <span class="id" type="var">Heval</span>. <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">update_eq</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab317"></a><h4 class="section">Exercise: 3 stars, recommended (XtimesYinZ_spec)</h4>
+ State and prove a specification of <span class="inlinecode"><span class="id" type="var">XtimesYinZ</span></span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab318"></a><h4 class="section">Exercise: 3 stars, recommended (loop_never_stops)</h4>
+
+</div>
+<div class="code code-space">
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">loop_never_stops</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">st</span> <span class="id" type="var">st'</span>,<br/>
+&nbsp;&nbsp;~(<span class="id" type="var">loop</span> / <span class="id" type="var">st</span> <span style="font-family: arial;">&dArr;</span> <span class="id" type="var">st'</span>).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">st</span> <span class="id" type="var">st'</span> <span class="id" type="var">contra</span>. <span class="id" type="tactic">unfold</span> <span class="id" type="var">loop</span> <span class="id" type="keyword">in</span> <span class="id" type="var">contra</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">remember</span> (<span class="id" type="var">WHILE</span> <span class="id" type="var">BTrue</span> <span class="id" type="var">DO</span> <span class="id" type="var">SKIP</span> <span class="id" type="var">END</span>) <span class="id" type="keyword">as</span> <span class="id" type="var">loopdef</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;Proceed&nbsp;by&nbsp;induction&nbsp;on&nbsp;the&nbsp;assumed&nbsp;derivation&nbsp;showing&nbsp;that<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="inlinecode"><span class="id" type="var">loopdef</span></span>&nbsp;terminates.&nbsp;&nbsp;Most&nbsp;of&nbsp;the&nbsp;cases&nbsp;are&nbsp;immediately<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contradictory&nbsp;(and&nbsp;so&nbsp;can&nbsp;be&nbsp;solved&nbsp;in&nbsp;one&nbsp;step&nbsp;with<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="inlinecode"><span class="id" type="tactic">inversion</span></span>).&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">no_whiles</span> (<span class="id" type="var">c</span> : <span class="id" type="var">com</span>) : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">c</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">SKIP</span>       =&gt; <span class="id" type="var">true</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">_</span> ::= <span class="id" type="var">_</span>    =&gt; <span class="id" type="var">true</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">c1</span> ; <span class="id" type="var">c2</span>  =&gt; <span class="id" type="var">andb</span> (<span class="id" type="var">no_whiles</span> <span class="id" type="var">c1</span>) (<span class="id" type="var">no_whiles</span> <span class="id" type="var">c2</span>)<br/>
+&nbsp;&nbsp;| <span class="id" type="var">IFB</span> <span class="id" type="var">_</span> <span class="id" type="var">THEN</span> <span class="id" type="var">ct</span> <span class="id" type="var">ELSE</span> <span class="id" type="var">cf</span> <span class="id" type="var">FI</span> =&gt; <span class="id" type="var">andb</span> (<span class="id" type="var">no_whiles</span> <span class="id" type="var">ct</span>) (<span class="id" type="var">no_whiles</span> <span class="id" type="var">cf</span>)<br/>
+&nbsp;&nbsp;| <span class="id" type="var">WHILE</span> <span class="id" type="var">_</span> <span class="id" type="var">DO</span> <span class="id" type="var">_</span> <span class="id" type="var">END</span>  =&gt; <span class="id" type="var">false</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab319"></a><h4 class="section">Exercise: 3 stars, optional (no_whilesR)</h4>
+ The <span class="inlinecode"><span class="id" type="var">no_whiles</span></span> property yields <span class="inlinecode"><span class="id" type="var">true</span></span> on just those programs that
+    have no while loops.  Using <span class="inlinecode"><span class="id" type="keyword">Inductive</span></span>, write a property
+    <span class="inlinecode"><span class="id" type="var">no_whilesR</span></span> such that <span class="inlinecode"><span class="id" type="var">no_whilesR</span></span> <span class="inlinecode"><span class="id" type="var">c</span></span> is provable exactly when <span class="inlinecode"><span class="id" type="var">c</span></span>
+    is a program with no while loops.  Then prove its equivalence
+    with <span class="inlinecode"><span class="id" type="var">no_whiles</span></span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">no_whilesR</span>: <span class="id" type="var">com</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="keyword">Prop</span> := <br/>
+&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+&nbsp;&nbsp;.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">no_whiles_eqv</span>:<br/>
+&nbsp;&nbsp;&nbsp;<span style="font-family: arial;">&forall;</span><span class="id" type="var">c</span>, <span class="id" type="var">no_whiles</span> <span class="id" type="var">c</span> = <span class="id" type="var">true</span> <span style="font-family: arial;">&harr;</span> <span class="id" type="var">no_whilesR</span> <span class="id" type="var">c</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab320"></a><h4 class="section">Exercise: 4 stars, optional (no_whiles_terminating)</h4>
+ Imp programs that don't involve while loops always terminate.
+    State and prove a theorem that says this.  (Use either <span class="inlinecode"><span class="id" type="var">no_whiles</span></span> or <span class="inlinecode"><span class="id" type="var">no_whilesR</span></span>, as you prefer.) 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab321"></a><h2 class="section">Proving a Program Correct (Optional)</h2>
+
+<div class="paragraph"> </div>
+
+ Recall the factorial program: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Print</span> <span class="id" type="var">fact_body</span>. <span class="id" type="keyword">Print</span> <span class="id" type="var">fact_loop</span>. <span class="id" type="keyword">Print</span> <span class="id" type="var">fact_com</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here is an alternative "mathematical" definition of the factorial
+    function: 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">real_fact</span> (<span class="id" type="var">n</span>:<span class="id" type="var">nat</span>) : <span class="id" type="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">n</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">O</span> =&gt; 1<br/>
+&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">n'</span> =&gt; <span class="id" type="var">n</span> * (<span class="id" type="var">real_fact</span> <span class="id" type="var">n'</span>)<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We would like to show that they agree &mdash; if we start <span class="inlinecode"><span class="id" type="var">fact_com</span></span> in
+    a state where variable <span class="inlinecode"><span class="id" type="var">X</span></span> contains some number <span class="inlinecode"><span class="id" type="var">x</span></span>, then it will
+    terminate in a state where variable <span class="inlinecode"><span class="id" type="var">Y</span></span> contains the factorial of
+    <span class="inlinecode"><span class="id" type="var">x</span></span>.
+
+<div class="paragraph"> </div>
+
+    To show this, we rely on the critical idea of a <i>loop
+    invariant</i>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">fact_invariant</span> (<span class="id" type="var">x</span>:<span class="id" type="var">nat</span>) (<span class="id" type="var">st</span>:<span class="id" type="var">state</span>) :=<br/>
+&nbsp;&nbsp;(<span class="id" type="var">st</span> <span class="id" type="var">Y</span>) * (<span class="id" type="var">real_fact</span> (<span class="id" type="var">st</span> <span class="id" type="var">Z</span>)) = <span class="id" type="var">real_fact</span> <span class="id" type="var">x</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">fact_body_preserves_invariant</span>: <span style="font-family: arial;">&forall;</span><span class="id" type="var">st</span> <span class="id" type="var">st'</span> <span class="id" type="var">x</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">fact_invariant</span> <span class="id" type="var">x</span> <span class="id" type="var">st</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">st</span> <span class="id" type="var">Z</span> &lt;&gt; 0 <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">fact_body</span> / <span class="id" type="var">st</span> <span style="font-family: arial;">&dArr;</span> <span class="id" type="var">st'</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">fact_invariant</span> <span class="id" type="var">x</span> <span class="id" type="var">st'</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">unfold</span> <span class="id" type="var">fact_invariant</span>, <span class="id" type="var">fact_body</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">st</span> <span class="id" type="var">st'</span> <span class="id" type="var">x</span> <span class="id" type="var">Hm</span> <span class="id" type="var">HZnz</span> <span class="id" type="var">He</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">He</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="tactic">clear</span> <span class="id" type="var">He</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H1</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="tactic">clear</span> <span class="id" type="var">H1</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H4</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="tactic">clear</span> <span class="id" type="var">H4</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">unfold</span> <span class="id" type="var">update</span>. <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;Show&nbsp;that&nbsp;st&nbsp;Z&nbsp;=&nbsp;S&nbsp;z'&nbsp;for&nbsp;some&nbsp;z'&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">destruct</span> (<span class="id" type="var">st</span> <span class="id" type="var">Z</span>) <span class="id" type="keyword">as</span> [| <span class="id" type="var">z'</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">ex_falso_quodlibet</span>. <span class="id" type="tactic">apply</span> <span class="id" type="var">HZnz</span>. <span class="id" type="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <span style="font-family: arial;">&larr;</span> <span class="id" type="var">Hm</span>. <span class="id" type="tactic">rewrite</span> <span style="font-family: arial;">&larr;</span> <span class="id" type="var">mult_assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">replace</span> (<span class="id" type="var">S</span> <span class="id" type="var">z'</span> - 1) <span class="id" type="keyword">with</span> <span class="id" type="var">z'</span> <span class="id" type="tactic">by</span> <span class="id" type="tactic">omega</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">reflexivity</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">fact_loop_preserves_invariant</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">st</span> <span class="id" type="var">st'</span> <span class="id" type="var">x</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">fact_invariant</span> <span class="id" type="var">x</span> <span class="id" type="var">st</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">fact_loop</span> / <span class="id" type="var">st</span> <span style="font-family: arial;">&dArr;</span> <span class="id" type="var">st'</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">fact_invariant</span> <span class="id" type="var">x</span> <span class="id" type="var">st'</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">st</span> <span class="id" type="var">st'</span> <span class="id" type="var">x</span> <span class="id" type="var">H</span> <span class="id" type="var">Hce</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">remember</span> <span class="id" type="var">fact_loop</span> <span class="id" type="keyword">as</span> <span class="id" type="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">ceval_cases</span> (<span class="id" type="tactic">induction</span> <span class="id" type="var">Hce</span>) <span class="id" type="var">Case</span>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">Heqc</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="tactic">clear</span> <span class="id" type="var">Heqc</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_WhileEnd".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(*&nbsp;trivial&nbsp;when&nbsp;the&nbsp;loop&nbsp;doesn't&nbsp;run...&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_WhileLoop".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(*&nbsp;if&nbsp;the&nbsp;loop&nbsp;does&nbsp;run,&nbsp;we&nbsp;know&nbsp;that&nbsp;fact_body&nbsp;preserves<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fact_invariant&nbsp;--&nbsp;we&nbsp;just&nbsp;need&nbsp;to&nbsp;assemble&nbsp;the&nbsp;pieces&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">IHHce2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">fact_body_preserves_invariant</span> <span class="id" type="keyword">with</span> <span class="id" type="var">st</span>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">try</span> <span class="id" type="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">Contra</span>. <span class="id" type="tactic">simpl</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H0</span>; <span class="id" type="tactic">subst</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <span class="id" type="var">Contra</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H0</span>. <span class="id" type="tactic">inversion</span> <span class="id" type="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">reflexivity</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">guard_false_after_loop</span>: <span style="font-family: arial;">&forall;</span><span class="id" type="var">b</span> <span class="id" type="var">c</span> <span class="id" type="var">st</span> <span class="id" type="var">st'</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">WHILE</span> <span class="id" type="var">b</span> <span class="id" type="var">DO</span> <span class="id" type="var">c</span> <span class="id" type="var">END</span>) / <span class="id" type="var">st</span> <span style="font-family: arial;">&dArr;</span> <span class="id" type="var">st'</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">beval</span> <span class="id" type="var">st'</span> <span class="id" type="var">b</span> = <span class="id" type="var">false</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span> <span class="id" type="var">st</span> <span class="id" type="var">st'</span> <span class="id" type="var">Hce</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">remember</span> (<span class="id" type="var">WHILE</span> <span class="id" type="var">b</span> <span class="id" type="var">DO</span> <span class="id" type="var">c</span> <span class="id" type="var">END</span>) <span class="id" type="keyword">as</span> <span class="id" type="var">cloop</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">ceval_cases</span> (<span class="id" type="tactic">induction</span> <span class="id" type="var">Hce</span>) <span class="id" type="var">Case</span>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">Heqcloop</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="tactic">clear</span> <span class="id" type="var">Heqcloop</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_WhileEnd".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "E_WhileLoop".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">IHHce2</span>. <span class="id" type="tactic">reflexivity</span>. <span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Patching it all together... 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">fact_com_correct</span> : <span style="font-family: arial;">&forall;</span><span class="id" type="var">st</span> <span class="id" type="var">st'</span> <span class="id" type="var">x</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">st</span> <span class="id" type="var">X</span> = <span class="id" type="var">x</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">fact_com</span> / <span class="id" type="var">st</span> <span style="font-family: arial;">&dArr;</span> <span class="id" type="var">st'</span> <span style="font-family: arial;">&rarr;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">st'</span> <span class="id" type="var">Y</span> = <span class="id" type="var">real_fact</span> <span class="id" type="var">x</span>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span> <span class="id" type="var">st</span> <span class="id" type="var">st'</span> <span class="id" type="var">x</span> <span class="id" type="var">HX</span> <span class="id" type="var">Hce</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">Hce</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="tactic">clear</span> <span class="id" type="var">Hce</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H1</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="tactic">clear</span> <span class="id" type="var">H1</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H4</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="tactic">clear</span> <span class="id" type="var">H4</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion</span> <span class="id" type="var">H1</span>; <span class="id" type="tactic">subst</span>; <span class="id" type="tactic">clear</span> <span class="id" type="var">H1</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rename</span> <span class="id" type="var">st'</span> <span class="id" type="var">into</span> <span class="id" type="var">st''</span>. <span class="id" type="tactic">simpl</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H5</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;The&nbsp;invariant&nbsp;is&nbsp;true&nbsp;before&nbsp;the&nbsp;loop&nbsp;runs...&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="var">remember</span> (<span class="id" type="var">update</span> (<span class="id" type="var">update</span> <span class="id" type="var">st</span> <span class="id" type="var">Z</span> (<span class="id" type="var">st</span> <span class="id" type="var">X</span>)) <span class="id" type="var">Y</span> 1) <span class="id" type="keyword">as</span> <span class="id" type="var">st'</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">assert</span> (<span class="id" type="var">fact_invariant</span> (<span class="id" type="var">st</span> <span class="id" type="var">X</span>) <span class="id" type="var">st'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">subst</span>. <span class="id" type="tactic">unfold</span> <span class="id" type="var">fact_invariant</span>, <span class="id" type="var">update</span>. <span class="id" type="tactic">simpl</span>. <span class="id" type="tactic">omega</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;...so&nbsp;when&nbsp;the&nbsp;loop&nbsp;is&nbsp;done&nbsp;running,&nbsp;the&nbsp;invariant&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;maintained&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">assert</span> (<span class="id" type="var">fact_invariant</span> (<span class="id" type="var">st</span> <span class="id" type="var">X</span>) <span class="id" type="var">st''</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">fact_loop_preserves_invariant</span> <span class="id" type="keyword">with</span> <span class="id" type="var">st'</span>; <span class="id" type="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">unfold</span> <span class="id" type="var">fact_invariant</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H0</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;Finally,&nbsp;if&nbsp;the&nbsp;loop&nbsp;terminated,&nbsp;then&nbsp;Z&nbsp;is&nbsp;0;&nbsp;so&nbsp;Y&nbsp;must&nbsp;be<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;factorial&nbsp;of&nbsp;X&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">guard_false_after_loop</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H5</span>. <span class="id" type="tactic">simpl</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H5</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">destruct</span> (<span class="id" type="var">st''</span> <span class="id" type="var">Z</span>).<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "st'' Z = 0". <span class="id" type="tactic">simpl</span> <span class="id" type="keyword">in</span> <span class="id" type="var">H0</span>. <span class="id" type="tactic">omega</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">Case</span> "st'' Z &gt; 0 (impossible)". <span class="id" type="tactic">inversion</span> <span class="id" type="var">H5</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+One might wonder whether all this work with poking at states and
+    unfolding definitions could be ameliorated with some more powerful
+    lemmas and/or more uniform reasoning principles... Indeed, this is
+    exactly the topic of the upcoming <span class="inlinecode"><span class="id" type="var">Hoare</span></span> chapter! 
+<div class="paragraph"> </div>
+
+<a name="lab322"></a><h4 class="section">Exercise: 4 stars, optional (subtract_slowly_spec)</h4>
+ Prove a specification for subtract_slowly, using the above
+    specification of <span class="inlinecode"><span class="id" type="var">fact_com</span></span> and the invariant below as
+    guides. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">ss_invariant</span> (<span class="id" type="var">x</span>:<span class="id" type="var">nat</span>) (<span class="id" type="var">z</span>:<span class="id" type="var">nat</span>) (<span class="id" type="var">st</span>:<span class="id" type="var">state</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">minus</span> (<span class="id" type="var">st</span> <span class="id" type="var">Z</span>) (<span class="id" type="var">st</span> <span class="id" type="var">X</span>) = <span class="id" type="var">minus</span> <span class="id" type="var">z</span> <span class="id" type="var">x</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab323"></a><h1 class="section">Additional Exercises</h1>
+
+<div class="paragraph"> </div>
+
+<a name="lab324"></a><h4 class="section">Exercise: 4 stars, optional (add_for_loop)</h4>
+ Add C-style <span class="inlinecode"><span class="id" type="keyword">for</span></span> loops to the language of commands, update the
+    <span class="inlinecode"><span class="id" type="var">ceval</span></span> definition to define the semantics of <span class="inlinecode"><span class="id" type="keyword">for</span></span> loops, and add
+    cases for <span class="inlinecode"><span class="id" type="keyword">for</span></span> loops as needed so that all the proofs in this file
+    are accepted by Coq.
+
+<div class="paragraph"> </div>
+
+    A <span class="inlinecode"><span class="id" type="keyword">for</span></span> loop should be parameterized by (a) a statement executed
+    initially, (b) a test that is run on each iteration of the loop to
+    determine whether the loop should continue, (c) a statement
+    executed at the end of each loop iteration, and (d) a statement
+    that makes up the body of the loop.  (You don't need to worry
+    about making up a concrete Notation for <span class="inlinecode"><span class="id" type="keyword">for</span></span> loops, but feel free
+    to play with this too if you like.) 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab325"></a><h4 class="section">Exercise: 3 stars, optional (short_circuit)</h4>
+ Most modern programming languages use a "short-circuit" evaluation
+    rule for boolean <span class="inlinecode"><span class="id" type="var">and</span></span>: to evaluate <span class="inlinecode"><span class="id" type="var">BAnd</span></span> <span class="inlinecode"><span class="id" type="var">b1</span></span> <span class="inlinecode"><span class="id" type="var">b2</span></span>, first evaluate
+    <span class="inlinecode"><span class="id" type="var">b1</span></span>.  If it evaluates to <span class="inlinecode"><span class="id" type="var">false</span></span>, then the entire <span class="inlinecode"><span class="id" type="var">BAnd</span></span>
+    expression evaluates to <span class="inlinecode"><span class="id" type="var">false</span></span> immediately, without evaluating
+    <span class="inlinecode"><span class="id" type="var">b2</span></span>.  Otherwise, <span class="inlinecode"><span class="id" type="var">b2</span></span> is evaluated to determine the result of the
+    <span class="inlinecode"><span class="id" type="var">BAnd</span></span> expression.
+
+<div class="paragraph"> </div>
+
+    Write an alternate version of <span class="inlinecode"><span class="id" type="var">beval</span></span> that performs short-circuit
+    evaluation of <span class="inlinecode"><span class="id" type="var">BAnd</span></span> in this manner, and prove that it is
+    equivalent to <span class="inlinecode"><span class="id" type="var">beval</span></span>. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab326"></a><h4 class="section">Exercise: 4 stars, recommended (stack_compiler)</h4>
+ HP Calculators, programming languages like Forth and Postscript,
+    and abstract machines like the Java Virtual Machine all evaluate
+    arithmetic expressions using a stack. For instance, the expression
+<pre>
+   (2*3)+(3*(4-2))
+</pre>
+   would be entered as
+<pre>
+   2 3 * 3 4 2 - * +
+</pre>
+   and evaluated like this:
+<pre>
+  []            |    2 3 * 3 4 2 - * +
+  [2]           |    3 * 3 4 2 - * +
+  [3, 2]        |    * 3 4 2 - * +
+  [6]           |    3 4 2 - * +
+  [3, 6]        |    4 2 - * +
+  [4, 3, 6]     |    2 - * +
+  [2, 4, 3, 6]  |    - * +
+  [2, 3, 6]     |    * +
+  [6, 6]        |    +
+  [12]          | 
+</pre>
+
+<div class="paragraph"> </div>
+
+  The task of this exercise is to write a small compiler that
+  translates <span class="inlinecode"><span class="id" type="var">aexp</span></span>s into stack machine instructions, and to prove its
+  correctness.
+
+<div class="paragraph"> </div>
+
+  The instruction set for our stack language will consist of the
+  following instructions:    
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">SPush</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span>: Push the number <span class="inlinecode"><span class="id" type="var">n</span></span> on the stack.
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">SLoad</span></span> <span class="inlinecode"><span class="id" type="var">X</span></span>: Load the identifier <span class="inlinecode"><span class="id" type="var">X</span></span> from the store and push it
+                  on the stack
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">SPlus</span></span>:   Pop the two top numbers from the stack, add them, and
+                  push the result onto the stack.
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">SMinus</span></span>:  Similar, but subtract.
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">SMult</span></span>:   Similar, but multiply.
+
+</li>
+</ul>
+
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">sinstr</span> : <span class="id" type="keyword">Type</span> :=<br/>
+| <span class="id" type="var">SPush</span> : <span class="id" type="var">nat</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">sinstr</span><br/>
+| <span class="id" type="var">SLoad</span> : <span class="id" type="var">id</span> <span style="font-family: arial;">&rarr;</span> <span class="id" type="var">sinstr</span><br/>
+| <span class="id" type="var">SPlus</span> : <span class="id" type="var">sinstr</span><br/>
+| <span class="id" type="var">SMinus</span> : <span class="id" type="var">sinstr</span><br/>
+| <span class="id" type="var">SMult</span> : <span class="id" type="var">sinstr</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Write a function to evaluate programs in the stack language. It
+    takes as input a state, a stack represented as a list of
+    numbers (top stack item is the head of the list), and a program
+    represented as a list of instructions, and returns the stack after
+    executing the program. Test your function on the examples below.
+
+<div class="paragraph"> </div>
+
+    Note that the specification leaves unspecified what to do when
+    encountering an <span class="inlinecode"><span class="id" type="var">SPlus</span></span>, <span class="inlinecode"><span class="id" type="var">SMinus</span></span>, or <span class="inlinecode"><span class="id" type="var">SMult</span></span> instruction if the
+    stack contains less than two elements.  In a sense it is
+    immaterial, since our compiler will never emit such a malformed
+    program. However, when you do the correctness proof you may find
+    some choices makes the proof easier than others. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">s_execute</span> (<span class="id" type="var">st</span> : <span class="id" type="var">state</span>) (<span class="id" type="var">stack</span> : <span class="id" type="var">list</span> <span class="id" type="var">nat</span>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">prog</span> : <span class="id" type="var">list</span> <span class="id" type="var">sinstr</span>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" type="var">list</span> <span class="id" type="var">nat</span> :=<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">admit</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Example</span> <span class="id" type="var">s_execute1</span> : <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">s_execute</span> <span class="id" type="var">empty_state</span> [] <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" type="var">SPush</span> 5, <span class="id" type="var">SPush</span> 3, <span class="id" type="var">SPush</span> 1, <span class="id" type="var">SMinus</span>]<br/>
+&nbsp;&nbsp;&nbsp;= [2, 5].<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Example</span> <span class="id" type="var">s_execute2</span> : <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">s_execute</span> (<span class="id" type="var">update</span> <span class="id" type="var">empty_state</span> <span class="id" type="var">X</span> 3) [3,4] <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" type="var">SPush</span> 4, <span class="id" type="var">SLoad</span> <span class="id" type="var">X</span>, <span class="id" type="var">SMult</span>, <span class="id" type="var">SPlus</span>]<br/>
+&nbsp;&nbsp;&nbsp;= [15, 4].<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Next, write a function which compiles an <span class="inlinecode"><span class="id" type="var">aexp</span></span> into a stack
+    machine program. The effect of running the program should be the
+    same as pushing the value of the expression on the stack. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">s_compile</span> (<span class="id" type="var">e</span> : <span class="id" type="var">aexp</span>) : <span class="id" type="var">list</span> <span class="id" type="var">sinstr</span> :=<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">admit</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;<br/>
+Example&nbsp;s_compile1&nbsp;:&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;s_compile&nbsp;(AMinus&nbsp;(AId&nbsp;X)&nbsp;(AMult&nbsp;(ANum&nbsp;2)&nbsp;(AId&nbsp;Y)))<br/>
+&nbsp;&nbsp;=&nbsp;<span class="inlinecode"><span class="id" type="var">SLoad</span></span> <span class="inlinecode"><span class="id" type="var">X</span>,</span> <span class="inlinecode"><span class="id" type="var">SPush</span></span> <span class="inlinecode">2,</span> <span class="inlinecode"><span class="id" type="var">SLoad</span></span> <span class="inlinecode"><span class="id" type="var">Y</span>,</span> <span class="inlinecode"><span class="id" type="var">SMult</span>,</span> <span class="inlinecode"><span class="id" type="var">SMinus</span></span>.<br/>
+Proof.&nbsp;reflexivity.&nbsp;Qed.<br/>
+*)</span><br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Finally, prove the following theorem, stating that the <span class="inlinecode"><span class="id" type="var">compile</span></span>
+    function behaves correctly.  You will need to start by stating a
+    more general lemma to get a usable induction hypothesis. 
+</div>
+<div class="code code-tight">
+
+<br/>
+<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">s_compile_correct</span> : <span style="font-family: arial;">&forall;</span>(<span class="id" type="var">st</span> : <span class="id" type="var">state</span>) (<span class="id" type="var">e</span> : <span class="id" type="var">aexp</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">s_execute</span> <span class="id" type="var">st</span> [] (<span class="id" type="var">s_compile</span> <span class="id" type="var">e</span>) = [ <span class="id" type="var">aeval</span> <span class="id" type="var">st</span> <span class="id" type="var">e</span> ].<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span> <span class="id" type="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code code-tight">
 
 <br/>
 </div>

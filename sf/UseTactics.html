@@ -56,7 +56,7 @@
 <div class="code code-tight">
 
 <br/>
-<span class="comment">(*&nbsp;$Date:&nbsp;2012-07-22&nbsp;18:36:58&nbsp;-0400&nbsp;(Sun,&nbsp;22&nbsp;Jul&nbsp;2012)&nbsp;$&nbsp;*)</span><br/>
+<span class="comment">(*&nbsp;$Date:&nbsp;2012-08-08&nbsp;20:21:51&nbsp;-0400&nbsp;(Wed,&nbsp;08&nbsp;Aug&nbsp;2012)&nbsp;$&nbsp;*)</span><br/>
 <span class="comment">(*&nbsp;Chapter&nbsp;maintained&nbsp;by&nbsp;Arthur&nbsp;Chargueraud&nbsp;*)</span><br/>
 
 <br/>
@@ -233,7 +233,7 @@ Like the arguments of <span class="inlinecode"><span class="id" type="tactic">in
 <span class="id" type="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" type="var">introv</span> [<span class="id" type="var">x</span> <span class="id" type="var">H2</span>]. <span class="id" type="tactic">eauto</span>.<br/>
 &nbsp;&nbsp;<span class="comment">(*&nbsp;same&nbsp;as&nbsp;<span class="inlinecode"><span class="id" type="tactic">intros</span></span> <span class="inlinecode"><span class="id" type="var">X</span></span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">Q</span></span> <span class="inlinecode"><span class="id" type="var">R</span></span> <span class="inlinecode"><span class="id" type="var">H1</span></span> <span class="inlinecode">[<span class="id" type="var">x</span></span> <span class="inlinecode"><span class="id" type="var">H2</span>].</span>,&nbsp;which&nbsp;is&nbsp;itself&nbsp;short&nbsp;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;<span class="inlinecode"><span class="id" type="tactic">intros</span></span> <span class="inlinecode"><span class="id" type="var">X</span></span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">Q</span></span> <span class="inlinecode"><span class="id" type="var">R</span></span> <span class="inlinecode"><span class="id" type="var">H1</span></span> <span class="inlinecode">[<span class="id" type="var">x</span></span> <span class="inlinecode"><span class="id" type="var">H2</span>].</span> <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> <span class="inlinecode"><span class="id" type="var">H2</span></span> <span class="inlinecode"><span class="id" type="keyword">as</span></span> <span class="inlinecode">[<span class="id" type="var">x</span></span> <span class="inlinecode"><span class="id" type="var">H2</span>].</span>&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;<span class="inlinecode"><span class="id" type="tactic">intros</span></span> <span class="inlinecode"><span class="id" type="var">X</span></span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">Q</span></span> <span class="inlinecode"><span class="id" type="var">R</span></span> <span class="inlinecode"><span class="id" type="var">H1</span></span> <span class="inlinecode"><span class="id" type="var">H2</span>.</span> <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> <span class="inlinecode"><span class="id" type="var">H2</span></span> <span class="inlinecode"><span class="id" type="keyword">as</span></span> <span class="inlinecode">[<span class="id" type="var">x</span></span> <span class="inlinecode"><span class="id" type="var">H2</span>].</span>&nbsp;*)</span><br/>
 <span class="id" type="keyword">Qed</span>.<br/>
 
 <br/>
@@ -445,7 +445,7 @@ A more involved example appears next. In particular, this example
 </div>
 
 <div class="doc">
-Note: in the rare cases where one need to perform an inversion
+Note: in the rare cases where one needs to perform an inversion
     on an hypothesis <span class="inlinecode"><span class="id" type="var">H</span></span> without clearing <span class="inlinecode"><span class="id" type="var">H</span></span> from the context,
     one can use the tactic <span class="inlinecode"><span class="id" type="var">inverts</span></span> <span class="inlinecode"><span class="id" type="var">keep</span></span> <span class="inlinecode"><span class="id" type="var">H</span></span>, where the keyword <span class="inlinecode"><span class="id" type="var">keep</span></span>
     indicates that the hypothesis should be kept in the context. 
@@ -471,7 +471,7 @@ Note: in the rare cases where one need to perform an inversion
 
 <div class="doc">
 As you probably have learned, the tactic <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> can be used
-    to perform a case analysis. However, this tactic sometimes destroy
+    to perform a case analysis. However, this tactic sometimes destroys
     useful information. The tactic <span class="inlinecode"><span class="id" type="var">remember</span></span> is intended to introduce
     an equality that avoids <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> loosing such useful information.
     The tactic <span class="inlinecode"><span class="id" type="var">cases</span></span> provided by <span class="inlinecode"><span class="id" type="var">LibTactics</span></span> packages <span class="inlinecode"><span class="id" type="var">remember</span></span>
@@ -635,7 +635,7 @@ The tactic <span class="inlinecode"><span class="id" type="var">cases_if</span><
 
 <div class="paragraph"> </div>
 
- The tactic <span class="inlinecode"><span class="id" type="var">branch</span></span> <span class="inlinecode"><span class="id" type="var">k</span></span> can be used to proved a n-ary disjunction.
+ The tactic <span class="inlinecode"><span class="id" type="var">branch</span></span> <span class="inlinecode"><span class="id" type="var">k</span></span> can be used to prove a n-ary disjunction.
     For example, if the goal takes the form <span class="inlinecode"><span class="id" type="var">G1</span></span> <span class="inlinecode"><span style="font-family: arial;">&or;</span></span> <span class="inlinecode"><span class="id" type="var">G2</span></span> <span class="inlinecode"><span style="font-family: arial;">&or;</span></span> <span class="inlinecode"><span class="id" type="var">G3</span></span>,
     the tactic <span class="inlinecode"><span class="id" type="var">branch</span></span> <span class="inlinecode">2</span> leaves only <span class="inlinecode"><span class="id" type="var">G2</span></span> as subgoal. The following
     example illustrates the behavior of the <span class="inlinecode"><span class="id" type="var">branch</span></span> tactic. 
@@ -1539,7 +1539,7 @@ Note: one can write <span class="inlinecode"><span class="id" type="var">lets</s
 <div class="paragraph"> </div>
 
     Note: the tactics <span class="inlinecode"><span class="id" type="var">lets</span></span> accepts up to five arguments. Another
-    syntax if available for providing more than five arguments.
+    syntax is available for providing more than five arguments.
     It consists in using a list introduced with the special symbol <span class="inlinecode">&gt;&gt;</span>,
     for example <span class="inlinecode"><span class="id" type="var">lets</span></span> <span class="inlinecode"><span class="id" type="var">H</span>:</span> <span class="inlinecode">(&gt;&gt;</span> <span class="inlinecode"><span class="id" type="var">E0</span></span> <span class="inlinecode"><span class="id" type="var">E1</span></span> <span class="inlinecode"><span class="id" type="var">E2</span></span> <span class="inlinecode"><span class="id" type="var">E3</span></span> <span class="inlinecode"><span class="id" type="var">E4</span></span> <span class="inlinecode"><span class="id" type="var">E5</span></span> <span class="inlinecode"><span class="id" type="var">E6</span></span> <span class="inlinecode"><span class="id" type="var">E7</span></span> <span class="inlinecode"><span class="id" type="var">E8</span></span> <span class="inlinecode"><span class="id" type="var">E9</span></span> <span class="inlinecode">10)</span>. 
 </div>
@@ -1595,9 +1595,8 @@ Note: one can write <span class="inlinecode"><span class="id" type="var">lets</s
 
 <div class="paragraph"> </div>
 
-    Examples of use of <span class="inlinecode"><span class="id" type="var">applys</span></span> appear further on. Several examples 
-    of use of <span class="inlinecode"><span class="id" type="var">specializes</span></span> and <span class="inlinecode"><span class="id" type="var">forwards</span></span> can be found in the 
-    tutorial chapter <span class="inlinecode"><span class="id" type="var">UseAuto</span></span>. 
+    Examples of use of <span class="inlinecode"><span class="id" type="var">applys</span></span> appear further on. Several examples of
+    use of <span class="inlinecode"><span class="id" type="var">forwards</span></span> can be found in the tutorial chapter <span class="inlinecode"><span class="id" type="var">UseAuto</span></span>. 
 </div>
 <div class="code code-tight">
 

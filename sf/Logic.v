@@ -57,7 +57,6 @@ Inductive and (P Q : Prop) : Prop :=
     chapter, this definition is parameterized; however, in this case,
     the parameters are themselves propositions, rather than numbers. *)
 
-
 (** The intuition behind this definition is simple: to
     construct evidence for [and P Q], we must provide evidence
     for [P] and evidence for [Q].  More precisely:
@@ -697,7 +696,6 @@ Notation "'exists' x , p" := (ex _ (fun x => p))
   (at level 200, x ident, right associativity) : type_scope.
 Notation "'exists' x : X , p" := (ex _ (fun x:X => p))
   (at level 200, x ident, right associativity) : type_scope.
-
 
 (** We can use the same set of tactics as always for
     manipulating existentials.  For example, if to prove an
@@ -1747,5 +1745,4 @@ Qed.
     when you type [Qed], Coq checks the term for validity from
     scratch.  Only lemmas whose proofs pass the type-checker can be
     used in further proof developments.  *)
-
 

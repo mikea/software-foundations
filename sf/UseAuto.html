@@ -56,7 +56,7 @@
 <div class="code code-tight">
 
 <br/>
-<span class="comment">(*&nbsp;$Date:&nbsp;2012-04-23&nbsp;14:08:14&nbsp;-0400&nbsp;(Mon,&nbsp;23&nbsp;Apr&nbsp;2012)&nbsp;$&nbsp;*)</span><br/>
+<span class="comment">(*&nbsp;$Date:&nbsp;2012-08-08&nbsp;20:21:51&nbsp;-0400&nbsp;(Wed,&nbsp;08&nbsp;Aug&nbsp;2012)&nbsp;$&nbsp;*)</span><br/>
 <span class="comment">(*&nbsp;Chapter&nbsp;maintained&nbsp;by&nbsp;Arthur&nbsp;Chargueraud&nbsp;*)</span><br/>
 
 <br/>
@@ -892,7 +892,7 @@ This time, the output message suggests that the proof search
 
 <div class="paragraph"> </div>
 
-    The second possibility is useful for lemmas that needs to be
+    The second possibility is useful for lemmas that need to be
     exploited several times. The syntax for adding a lemma as a hint
     is <span class="inlinecode"><span class="id" type="keyword">Hint</span></span> <span class="inlinecode"><span class="id" type="keyword">Resolve</span></span> <span class="inlinecode"><span class="id" type="var">mylemma</span></span>. For example, the lemma asserting than
     any number is less than or equal to itself, <span class="inlinecode"><span style="font-family: arial;">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">x</span>,</span> <span class="inlinecode"><span class="id" type="var">x</span></span> <span class="inlinecode">&lt;=</span> <span class="inlinecode"><span class="id" type="var">x</span></span>,
@@ -1447,7 +1447,7 @@ Exercise: using the lemma above, simplify the proof of
 <div class="doc">
 If we try to combine the two proofs into a single one,
     we will likely fail, because of a limitation of the 
-    tactic <span class="inlinecode"><span class="id" type="tactic">induction</span></span>. Indeed, this tactic looses
+    <span class="inlinecode"><span class="id" type="tactic">induction</span></span> tactic. Indeed, this tactic looses
     information when applied to a predicate whose arguments
     are not reduced to variables, such as <span class="inlinecode"><span class="id" type="var">t</span></span> <span class="inlinecode"><span style="font-family: arial;">&rArr;*</span></span> <span class="inlinecode">(<span class="id" type="var">C</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span>.
     You will thus need to use the more powerful tactic called
@@ -2385,7 +2385,7 @@ In the previous example, the proof search has spent a lot of time
     transitivity, which produces two subgoals, <span class="inlinecode"><span class="id" type="var">subtype</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">?<span class="id" type="var">X</span></span> and
     <span class="inlinecode"><span class="id" type="var">subtype</span></span> <span class="inlinecode">?<span class="id" type="var">X</span></span> <span class="inlinecode"><span class="id" type="var">T</span></span>. Solving the first subgoal, <span class="inlinecode"><span class="id" type="var">subtype</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">?<span class="id" type="var">X</span></span>, is
     straightforward, it suffices to apply reflexivity. This unifies
-    <span class="inlinecode">?<span class="id" type="var">X</span></span> with <span class="inlinecode"><span class="id" type="var">S</span></span>. So, the second sugoal, <span class="inlinecode"><span class="id" type="var">subtype</span></span> <span class="inlinecode">?<span class="id" type="var">X</span></span> <span class="inlinecode"><span class="id" type="var">T</span></span>, becomes
+    <span class="inlinecode">?<span class="id" type="var">X</span></span> with <span class="inlinecode"><span class="id" type="var">S</span></span>. So, the second sugoal, <span class="inlinecode"><span class="id" type="var">subtype</span></span> <span class="inlinecode">?<span class="id" type="var">X</span></span> <span class="inlinecode"><span class="id" type="var">T</span></span>,
     becomes <span class="inlinecode"><span class="id" type="var">subtype</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">T</span></span>, which is exactly what we started from...
 
 <div class="paragraph"> </div>
@@ -2460,8 +2460,8 @@ This hint declaration can be understood as follows.
       obligation has to look like.
 
 </li>
-<li> The branch <span class="inlinecode">=&gt;</span> <span class="inlinecode"><span class="id" type="tactic">apply</span></span> <span class="inlinecode"><span class="id" type="var">subtype_trans</span></span> <span class="inlinecode"><span class="id" type="keyword">with</span></span> <span class="inlinecode">(<span class="id" type="var">T</span>:=<span class="id" type="var">T</span>)</span> that follows
-      indicate that if the goal has the form <span class="inlinecode"><span class="id" type="var">subtype</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">U</span></span> and if
+<li> The branch <span class="inlinecode">=&gt;</span> <span class="inlinecode"><span class="id" type="tactic">apply</span></span> <span class="inlinecode">(@<span class="id" type="var">subtype_trans</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">T</span></span> <span class="inlinecode"><span class="id" type="var">U</span>)</span> that follows
+      indicates that if the goal has the form <span class="inlinecode"><span class="id" type="var">subtype</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">U</span></span> and if
       there exists an hypothesis of the form <span class="inlinecode"><span class="id" type="var">subtype</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">T</span></span>, then
       we should try and apply transitivity lemma instantiated on
       the arguments <span class="inlinecode"><span class="id" type="var">S</span></span>, <span class="inlinecode"><span class="id" type="var">T</span></span> and <span class="inlinecode"><span class="id" type="var">U</span></span>. (Note: the symbol <span class="inlinecode">@</span> in front of
@@ -2766,7 +2766,7 @@ One of the strengths of <span class="inlinecode"><span class="id" type="tactic">
 
 </li>
 <li> <span class="inlinecode"><span class="id" type="var">jauto</span></span> extends <span class="inlinecode"><span class="id" type="tactic">eauto</span></span> with support for  negation, conjunctions, and 
-      existential at the head of hypothese.
+      existential at the head of hypothesis.
 
 <div class="paragraph"> </div>
 
